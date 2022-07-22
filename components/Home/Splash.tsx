@@ -26,7 +26,7 @@ const Splash: NextComponentType = () => {
             <p><FontAwesomeIcon icon={faCompass} className="pr-2"/> Explore Drops</p>
           </Button>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 invisible md:visible">
           <Image 
             alt="The Future is Now."
             src={splashImg}
