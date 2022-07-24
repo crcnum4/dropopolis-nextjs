@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Example from '../components/Home/Example'
 import How from '../components/Home/How/How'
+import Newsletter from '../components/Home/Newsletter/Newsletter'
 import Splash from '../components/Home/Splash'
 import styles from '../styles/Home.module.css'
 
@@ -15,9 +16,12 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Splash />
-      <How />
-      <Example />      
+        <div className="container mx-auto">
+          <Splash />
+          <How />
+          <Newsletter />
+          <Example />      
+        </div>
     </div>
   )
 }

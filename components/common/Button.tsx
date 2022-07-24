@@ -4,7 +4,7 @@ type ButtonProps = {
   type?: "button" | "submit" | "reset" | undefined,
   style?: React.CSSProperties | undefined,
   className?: string | undefined,
-  onClick: MouseEventHandler,
+  onClick?: MouseEventHandler,
   disabled?: boolean | undefined,
   children: React.ReactNode
 }

@@ -6,7 +6,7 @@ import Image from "next/image";
 const How: FC = () => {
   return (
     <div className="flex-row content-between flex-wrap">
-      <InfoCard  >
+      <InfoCard className="bg-blue-200/30" >
         <div className="flex-row justify-between mb-5">
           <IconHolder>
             <Image src="/assets/Solana.png" alt="solana" height={45} width={45} />
@@ -18,7 +18,7 @@ const How: FC = () => {
         <p className="font-bold text-3xl">Connect your wallet</p>
         <p className='space-x-2 text-1xl'>Decide which Solana wallet you want to use</p>
       </InfoCard>
-      <InfoCard  >
+      <InfoCard className="bg-blue-200/30">
         <div className="flex-row justify-between mb-5">
           <IconHolder>
             <Image src="/assets/Solana.png" alt="solana" height={45} width={45} />
@@ -30,7 +30,7 @@ const How: FC = () => {
         <p className="font-bold text-3xl">Submit Your NFT Drop</p>
         <p className='space-x-2 text-1xl'>Creators, submit your Nft drop for consideration</p>
       </InfoCard>
-      <InfoCard  >
+      <InfoCard className="bg-blue-200/30">
         <div className="flex-row justify-between mb-5">
           <IconHolder>
             <Image src="/assets/Solana.png" alt="solana" height={45} width={45} />

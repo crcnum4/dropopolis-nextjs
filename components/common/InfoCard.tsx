@@ -9,7 +9,10 @@ type InfoCardProps = {
 
 const InfoCard: FC<InfoCardProps> = (props) => {
   return (
-    <div className={"w-full p-12 m-5 bg-blue-100/30 h-auto flex-1"} style={{minWidth: '300px'}}>
+    <div 
+      className={props.className + " w-full p-12 m-5 h-auto flex-1 rounded-3xl"} 
+      style={{minWidth: '300px', ...props.style}}
+    >
       {props.children}
     </div>
   )
