@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes, MouseEventHandler } from "react";
+import React, { ButtonHTMLAttributes, FC, MouseEventHandler } from "react";
 
 type ButtonProps = {
   type?: "button" | "submit" | "reset" | undefined,
@@ -9,7 +9,7 @@ type ButtonProps = {
   children: React.ReactNode
 }
 
-const Button = (props: ButtonProps) => {
+const Button: FC<ButtonProps> = (props) => {
   return (
     <button
       type={props.type || "submit"}

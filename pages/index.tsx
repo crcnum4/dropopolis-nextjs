@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Example from '../components/Home/Example'
+import How from '../components/Home/How/How'
 import Splash from '../components/Home/Splash'
 import styles from '../styles/Home.module.css'
 
@@ -15,7 +16,7 @@ const Home: NextPage = () => {
       </Head>
 
       <Splash />
-
+      <How />
       <Example />      
     </div>
   )

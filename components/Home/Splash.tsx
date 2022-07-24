@@ -1,11 +1,11 @@
-import type { NextComponentType } from "next";
 import Image from "next/image";
 import splashImg from '../../public/assets/background_e.png'
 import Button from "../common/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faCompass} from '@fortawesome/free-solid-svg-icons'
+import { FC } from "react";
 
-const Splash: NextComponentType = () => {
+const Splash: FC = () => {
   return (
     <div className="w-full flex flex-row container mx-auto">
         <div className="flex-1 justify-center">
