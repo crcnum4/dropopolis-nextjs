@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Example from '../components/Home/Example'
+import Footer from '../components/Home/Footer/Footer'
 import How from '../components/Home/How/How'
 import Newsletter from '../components/Home/Newsletter/Newsletter'
 import Splash from '../components/Home/Splash'
@@ -20,7 +21,8 @@ const Home: NextPage = () => {
           <Splash />
           <How />
           <Newsletter />
-          <Example />      
+          {/* <Example /> */}
+          <Footer />
         </div>
     </div>
   )
