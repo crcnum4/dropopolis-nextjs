@@ -68,7 +68,7 @@ const mockDrops: Drop[] = [
   {
     id: 7,
     endTime: new Date(
-      currentDate.getTime() + (10 * hour) + (6 * minute)
+      currentDate.getTime() + (25 * hour) + (6 * minute)
     ).getTime(),
     creatorName: "Samantha W.",
     name: "Iterterrstrial",
@@ -77,7 +77,7 @@ const mockDrops: Drop[] = [
   {
     id: 8,
     endTime: new Date(
-      currentDate.getTime() + (17 * hour) + (28 * minute)
+      currentDate.getTime() + (50 * hour) + (28 * minute)
     ).getTime(),
     creatorName: "Nico Bellor",
     name: "The Future",

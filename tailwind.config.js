@@ -19,7 +19,9 @@ module.exports = {
       },
       'white': colors.white,
       'gray': colors.gray,
-      'transparent': colors.transparent
+      'transparent': colors.transparent,
+      'red': colors.red,
+      'salmon': "#FF8C69"
     }
   },
   plugins: [],
