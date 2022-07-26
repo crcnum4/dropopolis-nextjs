@@ -19,6 +19,7 @@ module.exports = {
       },
       'white': colors.white,
       'gray': colors.gray,
+      'transparent': colors.transparent
     }
   },
   plugins: [],
