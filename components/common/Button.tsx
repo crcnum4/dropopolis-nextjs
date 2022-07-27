@@ -14,7 +14,7 @@ const Button: FC<ButtonProps> = (props) => {
     <button
       type={props.type || "submit"}
       style={{...props.style}}
-      className={props.className}
+      className={props.className || "bg-blue-500 hover:bg-blue-700 text-white py-3 px-5 rounded-md w-fit my-5"}
       onClick={props.onClick}
       disabled={props.disabled}  
     >

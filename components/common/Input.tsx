@@ -76,7 +76,9 @@ const styles: Styles = {
     width: "100%",
     flex:1,
     height: "auto",
-    minWidth: '300px'
+    minWidth: '100px',
+    borderRadius: '0.75rem',
+    margin: "0.50rem 0"
   },
   container: {
     flexDirection: "row",

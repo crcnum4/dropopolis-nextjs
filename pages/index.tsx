@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Example from '../components/Home/Example'
 import Footer from '../components/Home/Footer/Footer'
 import How from '../components/Home/How/How'
+import LiveDrops from '../components/Home/LiveDrops/LiveDrops'
 import Newsletter from '../components/Home/Newsletter/Newsletter'
 import Splash from '../components/Home/Splash'
 import styles from '../styles/Home.module.css'
@@ -20,8 +21,8 @@ const Home: NextPage = () => {
         <div className="container mx-auto">
           <Splash />
           <How />
+          <LiveDrops />
           <Newsletter />
-          {/* <Example /> */}
           <Footer />
         </div>
     </div>

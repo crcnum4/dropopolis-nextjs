@@ -30,7 +30,7 @@ const styles: Styles = {
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    minWidth: '400px',
+    minWidth: '200px',
     borderRadius: '5px',
     overflow: 'hidden',
     flexWrap: 'wrap',
