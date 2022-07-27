@@ -27,7 +27,7 @@ const CDTimer: FC<CDTimerProps> = (props) => {
   return (
     <div className={'w-1/2 flex-row justify-center ' + props.className} style={props.style}>
       <FontAwesomeIcon icon={faStopwatch} size="lg" />
-      <p className='px-3 text-sm'>{moment.utc(moment(props.targetTime).diff(currentTime)).format('D[D] HH:mm:ss')}</p>
+      <p className='px-3 text-sm'>{moment.utc(moment(props.targetTime).diff(currentTime)).format('HH:mm:ss')}</p>
     </div>
   )
 

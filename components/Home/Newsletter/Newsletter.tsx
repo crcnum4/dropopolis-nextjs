@@ -17,7 +17,7 @@ const Newsletter: FC = () => {
 
   return (
     <div className='flex-row my-8'>
-      <InfoCard className='bg-blue-400/20 p-20'>
+      <InfoCard className='bg-blue-400/20 p-8 md:p-20'>
         <div className='flex-row'>
           <div className="flex-1 w-full">
             <h1 className="text-4xl font-bold">

@@ -8,7 +8,7 @@ import { FC } from "react";
 const Splash: FC = () => {
   return (
     <div className="w-full flex flex-row container mx-auto">
-        <div className="flex-1 justify-center">
+        <div className="flex-1 justify-center py-6">
           <h1 className="text-blue-700 font-bold normal text-7xl splash-text">
             Friends, Metas, Droppers...
           </h1>
