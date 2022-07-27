@@ -50,8 +50,8 @@ const Navbar: FC = () => {
               <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" />
             </Button>
             {wallet ? 
-              <WalletMultiButton className='mx-2'/> :
-              <WalletDisconnectButton className="mx-2"/>
+              <WalletMultiButton /> :
+              <WalletDisconnectButton />
             } 
           </div>
           <div className="lg:hidden items-center flex-row">
