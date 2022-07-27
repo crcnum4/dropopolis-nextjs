@@ -1,5 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-import {config, dom} from '@fortawesome/fontawesome-svg-core'
+import {config, dom} from '@fortawesome/fontawesome-svg-core';
+
 config.autoAddCss = false;
 
 class MyDocument extends Document {
@@ -11,8 +12,8 @@ class MyDocument extends Document {
           <style>{dom.css()}</style>
         </Head>
         <body>
-          <Main />
-          <NextScript />
+            <Main />
+            <NextScript />
         </body>
       </Html>
     )
