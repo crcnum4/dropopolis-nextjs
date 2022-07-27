@@ -9,15 +9,21 @@ type FooterProps = {
 }
 const Footer: FC<FooterProps> = (props) => {
   return (
-      <footer className="flex-1 py-7 .bt-black justify-center items-center flex-grow text-center" style={{...props.style}}>
-        <div className='flex-row flex-wrap'>
+      <div className="flex-1 py-7 .bt-black justify-center items-center flex-grow text-center" style={{...props.style}}>
+        <div 
+          style={{
+            width: '85vw',
+            display: 'flex', flexDirection: 'row',
+            flexWrap: 'wrap', justifyContent: 'space-between'
+          }}
+        >
             <AboutModule />
             <LinkModule />
             <SocialModule />
         </div>
-        <hr className='mb-3' />
+        <hr className='my-5 w-full' />
         <Copyright style={{}}/>
-      </footer>
+      </div>
   )
 }
 export default Footer;

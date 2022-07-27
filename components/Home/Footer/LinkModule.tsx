@@ -19,7 +19,7 @@ const linkData:LinkData[] = [
         title: "About Us",
         links: [
             {text: "About", url: "dropopolis.com"}, 
-            {text: "About", url: "dropopolis.com"}
+            {text: "Contact", url: "dropopolis.com"}
         ]
     },
     {
@@ -40,16 +40,18 @@ const linkData:LinkData[] = [
 
 const LinksModule: FC<LinksModuleProps> = (props) => {
   return (
-    <div style={{...props.style}} className={props.className || ""}>
+    <div style={{...props.style}} className={props.className || "flex-row mb-8"}>
         {linkData.map( linkSection => {
             return (
-                <div className='flex-1 flex-row'>
-                    <h4>{linkSection.title}</h4>
-                    <div>
-                        {linkSection.links.map( (l, i) => {
-                            return (<a key={i} href={l.url} target="_blank" rel="noopener noreferrer">{l.text}</a>)
-                        } )}
-                    </div>
+                <div className='' style={{minWidth: 130}}>
+                    <p className='font-bold text-left text-xl mb-4 text-gray-700'>{linkSection.title}</p>
+                    <div >
+                        <div className='flex-column text-left text-blue-500' >
+                            {linkSection.links.map( (l, i) => {
+                                return (<a key={i} href={l.url} target="_blank" rel="noopener noreferrer">{l.text}</a>)
+                            } )}
+                        </div>
+                </div>
                 </div>
             )
         })}
