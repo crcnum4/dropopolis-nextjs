@@ -1,0 +1,61 @@
+import React, { FC } from 'react'
+import Copyright from './Copyright'
+
+type LinksModuleProps = {
+  style?: React.CSSProperties
+  className?: string
+}
+
+type LinkData = {
+    title: string,
+    links: {
+        text: string,
+        url: string
+    }[]
+}
+
+const linkData:LinkData[] = [
+    {
+        title: "About Us",
+        links: [
+            {text: "About", url: "dropopolis.com"}, 
+            {text: "Contact", url: "dropopolis.com"}
+        ]
+    },
+    {
+        title: "Links",
+        links: [
+            {text: "Blog", url: "dropopolis.com"}, 
+            {text: "Help Center", url: "dropopolis.com"}
+        ]
+    },
+    {
+        title: "Community Links",
+        links: [
+            {text: "Discord", url: "dropopolis.com"}, 
+            {text: "Community", url: "dropopolis.com"}
+        ]
+    }
+]
+
+const LinksModule: FC<LinksModuleProps> = (props) => {
+  return (
+    <div style={{...props.style}} className={props.className || "flex-row mb-8"}>
+        {linkData.map( linkSection => {
+            return (
+                <div className='' style={{minWidth: 130}}>
+                    <p className='font-bold text-left text-xl mb-4 text-gray-700'>{linkSection.title}</p>
+                    <div >
+                        <div className='flex-column text-left text-blue-500' >
+                            {linkSection.links.map( (l, i) => {
+                                return (<a key={i} href={l.url} target="_blank" rel="noopener noreferrer">{l.text}</a>)
+                            } )}
+                        </div>
+                </div>
+                </div>
+            )
+        })}
+    </div>
+  )
+}
+export default LinksModule;
