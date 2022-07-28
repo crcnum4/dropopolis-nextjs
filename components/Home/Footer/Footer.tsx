@@ -8,6 +8,7 @@ type FooterProps = {
   style?: React.CSSProperties
 }
 const Footer: FC<FooterProps> = (props) => {
+  // what does .bt-black do?
   return (
       <div className="flex-1 py-7 .bt-black justify-center items-center flex-grow text-center" style={{...props.style}}>
         <div 
@@ -22,7 +23,7 @@ const Footer: FC<FooterProps> = (props) => {
             <SocialModule />
         </div>
         <hr className='my-5 w-full' />
-        <Copyright style={{}}/>
+        <Copyright />
       </div>
   )
 }
