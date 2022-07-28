@@ -39,11 +39,11 @@ const linkData:LinkData[] = [
 ]
 
 const LinksModule: FC<LinksModuleProps> = (props) => {
-  return (
-    <div style={{...props.style}} className={props.className || "flex-row mb-8"}>
-        {linkData.map( linkSection => {
+
+    const displayLinks = () => {
+        return linkData.map( linkSection => {
             return (
-                <div className='' style={{minWidth: 130}}>
+                <div className='' style={{minWidth: 130}} key={linkSection.title}>
                     <p className='font-bold text-left text-xl mb-4 text-gray-700'>{linkSection.title}</p>
                     <div >
                         <div className='flex-column text-left text-blue-500' >
@@ -51,10 +51,15 @@ const LinksModule: FC<LinksModuleProps> = (props) => {
                                 return (<a key={i} href={l.url} target="_blank" rel="noopener noreferrer">{l.text}</a>)
                             } )}
                         </div>
-                </div>
+                    </div>
                 </div>
             )
-        })}
+        })
+    }
+
+  return (
+    <div style={{...props.style}} className={props.className || "flex-row mb-8 mx-2"}>
+        {displayLinks()}
     </div>
   )
 }
