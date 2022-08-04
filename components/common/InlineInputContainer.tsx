@@ -12,7 +12,7 @@ const InlineInputContainer: FC<ContainerProps> = (props) => {
   return (
     <Fragment>
       {props.error ? <p style={styles.error}>{props.error}</p> : null}
-      <div style={{...styles.container, ...props.style}}>
+      <div style={{ ...props.style}} className="flex flex-wrap flex-row m-2">
         {props.children}
       </div>
     </Fragment>

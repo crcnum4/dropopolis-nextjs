@@ -14,6 +14,10 @@ type InputProps = {
   multiple?: boolean,
   disabled?: boolean,
   label?: string,
+  className? : string,
+  errorClassName?: string,
+  min?: number,
+  max?: number,
 }
 
 const Input: FC<InputProps> = (props) => {
@@ -21,8 +25,13 @@ const Input: FC<InputProps> = (props) => {
     <input 
       style={
         props.error ? 
-          {...styles.inputError, ...props.errorStyle} :
-          {...styles.input, ...props.style} 
+          {...props.errorStyle} :
+          {...props.style} 
+      }
+      className={ props.error ? 
+        props.errorClassName || "p-2 m-1 flex-1 border-red-500 border rounded-md"
+        :
+        props.className || "p-2 m-1 flex-1 border rounded-md"
       }
       id={props.id}
       type={props.type || "text"}
@@ -33,6 +42,8 @@ const Input: FC<InputProps> = (props) => {
       accept={props.accept}
       multiple={props.multiple}
       disabled={props.disabled}
+      min={props.min}
+      max={props.max}
     />
   );
 

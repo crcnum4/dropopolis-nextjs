@@ -14,6 +14,7 @@ export type StakerApiData = {
   logoImg: string,
   displayImg: string,
   tokenSymbol: string,
+  link: string,
 }
 
 export class StakerData {
@@ -29,6 +30,7 @@ export class StakerData {
   logoImg: string;
   displayImg: string;
   tokenSymbol: string;
+  link: string;
 
   constructor(data: StakerApiData) {
     this._id = data._id;
@@ -43,5 +45,6 @@ export class StakerData {
     this.logoImg = data.logoImg;
     this.displayImg = data.displayImg;
     this.tokenSymbol = data.tokenSymbol;
+    this.link = data.link;
   }
 }

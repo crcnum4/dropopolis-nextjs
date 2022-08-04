@@ -13,6 +13,7 @@ export type StakeConfigData = {
   dispenser: Uint8Array;
   configKey: number;
   buffer: Buffer;
+  link: string;
 }
 
 export class StakeConfig {
