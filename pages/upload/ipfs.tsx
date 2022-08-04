@@ -5,6 +5,7 @@ import ImageUploadForm from "../../components/ImageUploader/ImageUploadForm";
 
 import { useMoralis, useMoralisFile } from "react-moralis";
 import Button from "../../components/common/Button";
+import Backdrop from "../../components/common/BackDrop";
 
 export interface ImageUploadQuery {
   img: FileQuery
@@ -55,11 +56,11 @@ const ImageUploadPage : NextPage = () => {
     })
   }
 
-
   const uploadToServer = async () => {
     if (!query.img.file || isUploading ) return
     console.log('uploading ipfs');
     
+    setLoading(true)
     saveFile(query.img.file.name, query.img.file, { saveIPFS: true })
     .then ( imgRes => {
       console.log("res:", imgRes);
@@ -91,24 +92,32 @@ const ImageUploadPage : NextPage = () => {
           symbol: "",
         })
 
+
       })
       .catch  ( err => {
         console.log("err:", err);
         console.log("MoralisError:", moralisError);
-        
+      })
+      .finally ( () => {
+        setLoading(false)
       })
       
     })
     .catch ( err => {
       console.log("err:", err);
       console.log("MoralisError:", moralisError);
-      
+      setLoading(false)
     })
 
   };
 
   return (
     <div className="container mx-auto mt-8">
+      <Backdrop 
+        showBackdrop={loading}
+        showLoading
+        message="Uploading Image"
+      />
       <h1 className="text-4xl font-bold">
       Upload Images To IPFS
       </h1>
@@ -130,8 +139,6 @@ const ImageUploadPage : NextPage = () => {
           </Button>
         </Fragment>
       )}
-      
-      
     </div>
 
   )

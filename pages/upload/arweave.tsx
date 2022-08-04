@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import { ChangeEventHandler, useState } from "react";
 import { FileQuery } from "../../components/common/ImageInput";
-import ArweaveForm from "../../components/ImageUploader/ArweaveUploadForm";
+import ImageUploadForm from "../../components/ImageUploader/ImageUploadForm";
 
 export interface ArweaveFormQuery {
   img: FileQuery
@@ -26,6 +26,7 @@ const Arweave: NextPage = () => {
     symbol: "",
     form: "",
   })
+  
   const [loading, setLoading] = useState(false);
   
   const onSubmit = () => {
@@ -55,7 +56,7 @@ const Arweave: NextPage = () => {
       <h1 className="text-4xl font-bold">
       Upload Images To Arweave
       </h1>
-      <ArweaveForm 
+      <ImageUploadForm 
         query={query} 
         error={error}
         loading={loading} 

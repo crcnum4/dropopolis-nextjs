@@ -8,7 +8,7 @@ type AboutModuleProps = {
 }
 const AboutModule: FC<AboutModuleProps> = (props) => {
   return (
-    <div style={{...props.style}} className={props.className || "max-w-screen-sm text-left mb-8 mx-10"}>
+    <div style={{...props.style}} className={props.className || "max-w-screen-sm text-left mb-8 mx-10 my-6"}>
         <Image src={logo} alt='Dropopolis' className='h-10 w-fit' />
         <p className='mt-3'>A real city in the Metaverse, built by & for YOU!</p>
     </div>

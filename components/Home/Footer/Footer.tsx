@@ -15,7 +15,7 @@ const Footer: FC<FooterProps> = (props) => {
           style={{
             width: '85vw',
             display: 'flex', flexDirection: 'row',
-            flexWrap: 'wrap', justifyContent: 'space-between'
+            flexWrap: 'wrap', justifyContent: 'center'//'space-between'
           }}
         >
             <AboutModule />

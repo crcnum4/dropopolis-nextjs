@@ -10,8 +10,8 @@ type SocialModuleProps = {
 
 const SocialModule: FC<SocialModuleProps> = (props) => {
   return (
-    <div style={{...props.style}} className={props.className || 'mx-10'}>
-        <p className='font-bold text-xl text-left mb-4 text-gray-700'>Social Media</p>
+    <div style={{...props.style}} className={props.className || 'mx-13 my-6'}>
+        <p className='font-bold text-xl text-center mb-4 text-gray-700'>Social Media</p>
         <div className='flex-row flex-wrap justify-between text-white'>
           <a
             href='https://dropopolis.com' target="_blank" rel="noopener noreferrer" 
