@@ -2,7 +2,7 @@ import {ChangeEventHandler, FC, FormEventHandler} from 'react';
 import { ArweaveFormQuery, ArweaveFormErrors } from '../../pages/upload/arweave';
 import Button from '../common/Button';
 import Form from '../common/Form';
-import ImageInput from '../common/ImageInput';
+import ImageInput, { FileQuery } from '../common/ImageInput';
 import InlineInputContainer from '../common/InlineInputContainer';
 import Input from '../common/Input';
 
@@ -11,7 +11,7 @@ interface formProps {
   error?: ArweaveFormErrors,
   loading: boolean,
   onSubmit: FormEventHandler,
-  onUpdate: (field: string, value: string) => void
+  onUpdate: (field: string, value: string | FileQuery) => void
 }
 
 const ArweaveForm: FC<formProps> = (props) => {
@@ -36,14 +36,16 @@ const ArweaveForm: FC<formProps> = (props) => {
           placeholder='Symbol'
           id="symbol"
           value={query.symbol}
+          required
           onChange={handleChange}
         />
       </InlineInputContainer>
       <ImageInput 
         id='img'
-        value={query.img}
-        onUpdate={props.onUpdate}
         className='my-1'
+        value={query.img}
+        required
+        onUpdate={props.onUpdate}
       />
         
       <Button>Upload to Arweave</Button>

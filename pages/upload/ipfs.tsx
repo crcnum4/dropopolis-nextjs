@@ -1,26 +1,27 @@
 import { NextPage } from "next";
 import { ChangeEventHandler, useState } from "react";
-import ImageUploadForm from "../../components/ImageUploader/ImageUploadForm";
+import { FileQuery } from "../../components/common/ImageInput";
+import ImageUpload from "../../components/ImageUploader/ImageUploadForm";
 
-export interface ImageFormQuery {
-  img: string
+export interface ImageUploadQuery {
+  img: FileQuery
   name: string
   symbol: string
 }
 
-export interface ImageFormErrors extends ImageFormQuery {
+export interface ImageUploadErrors extends ImageUploadQuery {
   form: string
 }
 
-const Ipfs: NextPage = () => {
+const Arweave: NextPage = () => {
 
-  const [query, setQuery] = useState<ImageFormQuery>({
-    img: "",
+  const [query, setQuery] = useState<ImageUploadQuery>({
+    img: {url: ''},
     name: "Test NFT 1",
     symbol: "TEST",
   })
-  const [error, setError] = useState<ImageFormErrors>({
-    img: "",
+  const [error, setError] = useState<ImageUploadErrors>({
+    img: {url: ''},
     name: "",
     symbol: "",
     form: "",
@@ -31,7 +32,7 @@ const Ipfs: NextPage = () => {
     alert("submitted");
   }
 
-  const onUpdate = (field: string, value: string): void => {
+  const onUpdate = (field: string, value: string|FileQuery): void => {
     setQuery({
       ...query,
       [field]: value
@@ -40,9 +41,9 @@ const Ipfs: NextPage = () => {
 
 
   const uploadToServer:ChangeEventHandler<HTMLInputElement> = async (event) => {
-    if (!query.img) return
+    if (!query.img.file) return
     const body = new FormData();
-    body.append("file", query.img);
+    body.append("file", query.img.file);
     const response = await fetch("/api/file", {
       method: "POST",
       body
@@ -52,9 +53,9 @@ const Ipfs: NextPage = () => {
   return (
     <div className="container mx-auto mt-8">
       <h1 className="text-4xl font-bold">
-       Upload Images To IPFS
+      Upload Images To IPFS
       </h1>
-      <ImageUploadForm 
+      <ImageUpload 
         query={query} 
         error={error}
         loading={loading} 
@@ -67,4 +68,4 @@ const Ipfs: NextPage = () => {
   )
 }
 
-export default Ipfs;
+export default Arweave;

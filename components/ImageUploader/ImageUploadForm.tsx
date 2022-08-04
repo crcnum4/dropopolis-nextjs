@@ -1,17 +1,17 @@
 import {ChangeEventHandler, FC, FormEventHandler} from 'react';
-import { ImageFormQuery, ImageFormErrors } from '../../pages/upload/ipfs';
+import { ImageUploadQuery, ImageUploadErrors } from '../../pages/upload/ipfs';
 import Button from '../common/Button';
 import Form from '../common/Form';
-import ImageInput from '../common/ImageInput';
+import ImageInput, { FileQuery } from '../common/ImageInput';
 import InlineInputContainer from '../common/InlineInputContainer';
 import Input from '../common/Input';
 
 interface formProps {
-  query: ImageFormQuery,
-  error?: ImageFormErrors,
+  query: ImageUploadQuery,
+  error?: ImageUploadErrors,
   loading: boolean,
   onSubmit: FormEventHandler,
-  onUpdate: (field: string, value: string) => void
+  onUpdate: (field: string, value: string | FileQuery) => void
 }
 
 const ImageUploadForm: FC<formProps> = (props) => {
@@ -36,14 +36,16 @@ const ImageUploadForm: FC<formProps> = (props) => {
           placeholder='Symbol'
           id="symbol"
           value={query.symbol}
+          required
           onChange={handleChange}
         />
       </InlineInputContainer>
       <ImageInput 
         id='img'
-        value={query.img}
-        onUpdate={props.onUpdate}
         className='my-1'
+        value={query.img}
+        required
+        onUpdate={props.onUpdate}
       />
         
       <Button>Upload Image</Button>

@@ -1,9 +1,10 @@
 import { NextPage } from "next";
 import { ChangeEventHandler, useState } from "react";
+import { FileQuery } from "../../components/common/ImageInput";
 import ArweaveForm from "../../components/ImageUploader/ArweaveUploadForm";
 
 export interface ArweaveFormQuery {
-  img: string
+  img: FileQuery
   name: string
   symbol: string
 }
@@ -15,12 +16,12 @@ export interface ArweaveFormErrors extends ArweaveFormQuery {
 const Arweave: NextPage = () => {
 
   const [query, setQuery] = useState<ArweaveFormQuery>({
-    img: "",
+    img: {url: ''},
     name: "Test NFT 1",
     symbol: "TEST",
   })
   const [error, setError] = useState<ArweaveFormErrors>({
-    img: "",
+    img: {url: ''},
     name: "",
     symbol: "",
     form: "",
@@ -31,7 +32,7 @@ const Arweave: NextPage = () => {
     alert("submitted");
   }
 
-  const onUpdate = (field: string, value: string): void => {
+  const onUpdate = (field: string, value: string|FileQuery): void => {
     setQuery({
       ...query,
       [field]: value
@@ -40,9 +41,9 @@ const Arweave: NextPage = () => {
 
 
   const uploadToServer:ChangeEventHandler<HTMLInputElement> = async (event) => {
-    if (!query.img) return
+    if (!query.img.file) return
     const body = new FormData();
-    body.append("file", query.img);
+    body.append("file", query.img.file);
     const response = await fetch("/api/file", {
       method: "POST",
       body
