@@ -19,22 +19,22 @@ const linkData:LinkData[] = [
     {
         title: "About Us",
         links: [
-            {text: "About", url: "dropopolis.com"}, 
-            {text: "Contact", url: "dropopolis.com"}
+            {text: "About", url: "https://dropopolis.com"}, 
+            {text: "Contact", url: "https://dropopolis.com"}
         ]
     },
     {
         title: "Links",
         links: [
-            {text: "Blog", url: "dropopolis.com"}, 
-            {text: "Help Center", url: "dropopolis.com"}
+            {text: "Blog", url: "https://dropopolis.com"}, 
+            {text: "Help Center", url: "https://dropopolis.com"}
         ]
     },
     {
         title: "Community Links",
         links: [
-            {text: "Discord", url: "dropopolis.com"}, 
-            {text: "Community", url: "dropopolis.com"}
+            {text: "Discord", url: "https://dropopolis.com"}, 
+            {text: "Community", url: "https://dropopolis.com"}
         ]
     }
 ]
@@ -70,7 +70,7 @@ const LinksModule: FC<LinksModuleProps> = (props) => {
     }
 
   return (
-    <div style={{...props.style}} className={props.className || "flex-row mb-8 mx-2"}>
+    <div style={{...props.style}} className={props.className || "flex-row mb-8 mx-10"}>
         {displayLinks()}
     </div>
   )

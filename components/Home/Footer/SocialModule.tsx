@@ -10,7 +10,7 @@ type SocialModuleProps = {
 
 const SocialModule: FC<SocialModuleProps> = (props) => {
   return (
-    <div style={{...props.style}} className={props.className || ''}>
+    <div style={{...props.style}} className={props.className || 'mx-10'}>
         <p className='font-bold text-xl text-left mb-4 text-gray-700'>Social Media</p>
         <div className='flex-row flex-wrap justify-between text-white'>
           <a
