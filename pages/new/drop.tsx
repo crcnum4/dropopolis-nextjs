@@ -13,7 +13,7 @@ import Link from 'next/link';
       /*  sol is sent to an address defined by the service provider 
        *    6FKvsq4ydWFci6nGq9ckbjYMtnmaqAoatz5c9XWjiDuS for metaplex
        *  a web request is sent to the service providers api with any files and data to upload
-       *  the service checks for a sol transfer to their address in the ammount needed for the upload
+       *  the service checks for a sol transfer to their address in the amount needed for the upload
        *  from the pubkey provided in the api call.
        *  Once confirmed the service provider uses their own alt coin for the service (ex AR) 
        *  to upload the data and return the links.
@@ -28,7 +28,7 @@ const NewDrop: NextPage = () => {
         </h1>
           <h2>Dropopolis uses ReeMeta NFTs. </h2>
         <p> 
-          To create your Drops you can use one of our provided uploading tools for full service NFT creation. Or you can upload your Image and Offchain JSON files to any centralized or decentralized hosting service and provide the public URI for the two files using our self service system.
+          To create your Drops you can use one of our provided uploading tools for full service NFT creation. Or you can upload your Image and OffChain JSON files to any centralized or decentralized hosting service and provide the public URI for the two files using our self service system.
         </p>
         <p>
           Not sure which to use? If your NFT drop is still sitting on your computer then full service

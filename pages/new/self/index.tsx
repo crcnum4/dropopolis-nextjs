@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { FormEventHandler, useState } from "react";
+import { useState } from "react";
 import SelfDocumentation from "../../../components/SelfService/Documentation";
 import SelfDropForm from "../../../components/SelfService/SelfDropForm";
 
@@ -10,7 +10,7 @@ export interface SelfDropFormQuery {
   resaleFee: string,
 }
 
-export interface SelfDrpoFormErrors extends SelfDropFormQuery {
+export interface SelfDropFormErrors extends SelfDropFormQuery {
   form: string
 }
 
@@ -22,7 +22,7 @@ const SelfService: NextPage = () => {
     uri: "",
     resaleFee: ""
   })
-  const [error, setError] = useState<SelfDrpoFormErrors>({
+  const [error, setError] = useState<SelfDropFormErrors>({
     name: "",
     symbol: "",
     uri: "",

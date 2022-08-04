@@ -1,5 +1,5 @@
 import {ChangeEventHandler, FC, FormEventHandler} from 'react';
-import { SelfDropFormQuery, SelfDrpoFormErrors } from '../../pages/new/self';
+import { SelfDropFormQuery, SelfDropFormErrors } from '../../pages/new/self';
 import Button from '../common/Button';
 import Form from '../common/Form';
 import InlineInputContainer from '../common/InlineInputContainer';
@@ -7,7 +7,7 @@ import Input from '../common/Input';
 
 interface formProps {
   query: SelfDropFormQuery,
-  error?: SelfDrpoFormErrors,
+  error?: SelfDropFormErrors,
   loading: boolean,
   onSubmit: FormEventHandler,
   onUpdate: (field: string, value: string) => void

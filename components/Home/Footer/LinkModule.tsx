@@ -70,7 +70,7 @@ const LinksModule: FC<LinksModuleProps> = (props) => {
     }
 
   return (
-    <div style={{...props.style}} className={props.className || "flex-row mb-8 mx-10"}>
+    <div style={{...props.style}} className={props.className || "flex-row mb-8 mx-10 my-6"}>
         {displayLinks()}
     </div>
   )
