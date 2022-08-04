@@ -20,7 +20,14 @@ type InputProps = {
   max?: number,
 }
 
+//some input types ie 'file' does not support modifying the 'value' prop. 
+//As we find other input types that do not support 'value' we can add them to this list and make them safe to use with this component
+const nonValueInputTypes: {[key: string]: number} = {file: 1} //using an object for n(1) searching
+
 const Input: FC<InputProps> = (props) => {
+
+  const inputType = props.type || "text"
+
   const input = (
     <input 
       style={
@@ -34,11 +41,11 @@ const Input: FC<InputProps> = (props) => {
         props.className || "p-2 m-1 flex-1 border rounded-md"
       }
       id={props.id}
-      type={props.type || "text"}
+      type={inputType}
       placeholder={props.placeholder}
       onChange={props.onChange}
       required={props.disabled}
-      value={props.value}
+      value={nonValueInputTypes[inputType] ? "" : props.value}
       accept={props.accept}
       multiple={props.multiple}
       disabled={props.disabled}
