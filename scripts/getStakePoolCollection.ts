@@ -47,7 +47,7 @@ export const getStakePoolCollection = async (
     const data = await getMetadata(connection, tokenAccounts.value[i].account.data.parsed.info, stakeConfig);
     if (data === null) continue;
 
-    unstakedNfts.push({tokenAccount: tokenAccounts.value[i].pubkey, metadata: data.onChain, offChainMeta: data.offChain, selected: false});
+    unstakedNfts.push({tokenAccount: tokenAccounts.value[i].pubkey, metadata: data.onChain, offChainMeta: data.offChain});
   }
 
   const stakedNfts: CollectionNft[] = [];
@@ -64,7 +64,7 @@ export const getStakePoolCollection = async (
     let data = await getMetadata(connection, accountInfo, stakeConfig);
     if (data === null) continue;
 
-    stakedNfts.push({tokenAccount: stakeVault.vault[i].holdingAccount, metadata: data.onChain, offChainMeta: data.offChain, selected: false});
+    stakedNfts.push({tokenAccount: stakeVault.vault[i].holdingAccount, metadata: data.onChain, offChainMeta: data.offChain});
   }
 
 

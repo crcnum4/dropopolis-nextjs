@@ -12,11 +12,7 @@ const NavLinks: FC = () => {
   return (
     <div className="hidden lg:flex items-center flex-row">
       <Link href="/" >
-        <a className="py-3 px-5 mx-1 my-4">New Drops</a>
-      </Link>
-
-      <Link href="/">
-        <a className="py-3 px-5 mx-1 my-4">Featured Drops</a>
+        <a className="py-3 px-5 mx-1 my-4">Drops</a>
       </Link>
 
       <Link href="/">
@@ -25,10 +21,6 @@ const NavLinks: FC = () => {
 
       <Link href="/">
         <a className="py-3 px-5 mx-1 my-4">About</a>
-      </Link>
-
-      <Link href="/">
-        <a className="py-3 px-5 mx-1 my-4">Contact</a>
       </Link>
 
       <Button className="py-3 px-5 mx-2 my-4">

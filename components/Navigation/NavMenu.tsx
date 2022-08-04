@@ -15,14 +15,7 @@ const NavMenu: FC = () => {
         <li className="border-b border-gray-400 m-3 uppercase">
           <Link href="/">
             <a>
-              New Drops
-            </a>
-          </Link>
-        </li>
-        <li className="border-b border-gray-400 m-3 uppercase">
-          <Link href="/">
-            <a>
-              Featured Drops
+              Drops
             </a>
           </Link>
         </li>
@@ -37,13 +30,6 @@ const NavMenu: FC = () => {
           <Link href="/">
             <a>
               About
-            </a>
-          </Link>
-        </li>
-        <li className="border-b border-gray-400 m-3 uppercase">
-          <Link href="/">
-            <a>
-              Contact
             </a>
           </Link>
         </li>

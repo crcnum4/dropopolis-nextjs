@@ -10,22 +10,13 @@ type FormProps = {
 const Form: FC<FormProps> = (props) => {
   return (
     <form 
-    style={{...formStyle, ...props.style}} 
-    className={props.className} 
+    style={{...props.style}} 
+    className={props.className || "flex flex-col text-center w-full mb-6 max-w-4xl"} 
     onSubmit={props.onSubmit}
     >
       {props.children}
     </form>
   )
-}
-
-const formStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: "center",
-  alignItems: "center",
-  marginRight: '20%',
-  marginLeft: '20%',
-  flexDirection: 'column',
 }
 
 export default Form;
