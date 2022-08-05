@@ -1,42 +1,35 @@
 import { NextPage } from "next";
-import { ChangeEventHandler, FormEventHandler, Fragment, useState } from "react";
+import { FormEventHandler, useState } from "react";
 import { FileQuery } from "../../components/common/ImageInput";
 import ImageUploadForm from "../../components/ImageUploader/ImageUploadForm";
 
-import { useMoralis, useMoralisFile } from "react-moralis";
-import Button from "../../components/common/Button";
-import Backdrop from "../../components/common/BackDrop";
+import Backdrop from "../../components/common/Backdrop";
 
-export interface ImageUploadQuery {
+import { create } from 'ipfs-http-client'
+import { createMetadataJson } from "../../scripts/createMetadataJson";
+
+const IPFS_GATEWAY_POST = process.env.NEXT_PUBLIC_IPFS_GATEWAY_POST
+const IPFS_GATEWAY_GET = process.env.NEXT_PUBLIC_IPFS_GATEWAY_GET
+
+export interface NftUploadQuery {
   img: FileQuery
   name: string
   symbol: string
 }
 
-export interface ImageUploadErrors extends ImageUploadQuery {
+export interface NftUploadErrors extends NftUploadQuery {
   form: string
 }
 
 const ImageUploadPage : NextPage = () => {
-  const {
-      isAuthenticated,
-      authenticate
-  } = useMoralis()
+const ipfsClient = create({url: IPFS_GATEWAY_POST})
 
-  const { isUploading, saveFile, moralisFile, error: moralisError } = useMoralisFile();
-
-  const authorizeWallet = () => {
-    authenticate({
-      type: 'sol'
-    })
-  }
-
-  const [query, setQuery] = useState<ImageUploadQuery>({
+  const [query, setQuery] = useState<NftUploadQuery>({
     img: {url: ''},
     name: "Test NFT 1",
     symbol: "TEST",
   })
-  const [error, setError] = useState<ImageUploadErrors>({
+  const [error, setError] = useState<NftUploadErrors>({
     img: {url: ''},
     name: "",
     symbol: "",
@@ -57,57 +50,36 @@ const ImageUploadPage : NextPage = () => {
   }
 
   const uploadToServer = async () => {
-    if (!query.img.file || isUploading ) return
-    console.log('uploading ipfs');
-    
-    setLoading(true)
-    saveFile(query.img.file.name, query.img.file, { saveIPFS: true })
-    .then ( imgRes => {
-      console.log("res:", imgRes);
-      if (!imgRes) throw new Error("Upload error");
-      
-      console.log(imgRes.ipfs(), imgRes.hash())
-      console.log('upload to ipfs successful\n' + imgRes.ipfs());
-      alert('IPFS Image Upload Complete (1/2)')
+    if (!query.img.file || loading) return
 
-
-      saveFile("metadata.json", 
-        {base64: btoa(JSON.stringify({
-          name: query.name,
-          symbol: query.symbol,
-          url: imgRes.ipfs(),
-        }))},
-        { saveIPFS: true }
-      )
-      .then( metadataRes => {
-        console.log("res:", metadataRes);
-        if (!metadataRes) throw new Error("Upload error");
-
+    try {
+        console.log('uploading ipfs');
+        setLoading(true)
+        const imgFileIpfs = await ipfsClient.add(query.img.file)
+        alert('IPFS Image Upload Complete (1/2)')
+        const metaDataJSON = createMetadataJson(query)
+        const metaDataIpfs = await ipfsClient.add(metaDataJSON)
         alert(`Metadata Upload Complete (2/2)`)
-        console.log(`Metadata Upload Complete\n${imgRes.ipfs()}\n${metadataRes.ipfs()}`);
-        
         setQuery({
-          img: {url: ''},
-          name: "",
-          symbol: "",
+            img: {url: ''},
+            name: "",
+            symbol: "",
         })
 
-
-      })
-      .catch  ( err => {
-        console.log("err:", err);
-        console.log("MoralisError:", moralisError);
-      })
-      .finally ( () => {
         setLoading(false)
-      })
-      
-    })
-    .catch ( err => {
-      console.log("err:", err);
-      console.log("MoralisError:", moralisError);
-      setLoading(false)
-    })
+        const imageIpfsUrl = `${IPFS_GATEWAY_GET}/${imgFileIpfs.path}`
+        const metadataIpfsUrl = `${IPFS_GATEWAY_GET}/${metaDataIpfs.path}`
+        console.log(imageIpfsUrl);
+        console.log(metadataIpfsUrl);
+        console.log(imgFileIpfs);
+        console.log(metaDataIpfs);
+    
+    } catch (error) {
+        alert(error);
+        console.log(error);
+        setLoading(false)
+    }
+
 
   };
 
@@ -121,25 +93,14 @@ const ImageUploadPage : NextPage = () => {
       <h1 className="text-4xl font-bold">
       Upload Images To IPFS
       </h1>
-      {isAuthenticated ? (
-        <ImageUploadForm
+      <ImageUploadForm
         query={query} 
         error={error}
         loading={loading} 
         onSubmit={onSubmit} 
         onUpdate={onUpdate}
       />
-      ) : (
-        <Fragment>
-          <h1 className="text-2xl font-bold">
-          Authorize Your Wallet To Upload Images
-          </h1>
-          <Button onClick={authorizeWallet}>
-            Authorize
-          </Button>
-        </Fragment>
-      )}
-    </div>
+     </div>
 
   )
 }
