@@ -73,7 +73,7 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
         alert("You've been logged out. reconnect wallet");
         return;
         }
-        setBackDropMessage("(3/3) - Building NFT Mint Transaction")
+        setBackDropMessage("(3/5) - Building NFT Mint Transaction")
         const {mintKeys, tokenAccount, tx} = await createAndMintArtnNftTransaction(
             connection,
             publicKey,
@@ -85,7 +85,7 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
         // tx.recentBlockhash = blockhash;
         // tx.partialSign(mintKeys);
         
-        setBackDropMessage("(4/3) - Waiting For Transaction Approval")
+        setBackDropMessage("(4/5) - Waiting For Transaction Approval")
         const signature = await sendTransaction(
             tx, 
             connection, 
@@ -95,7 +95,7 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
             }
         )
 
-        setBackDropMessage("(4/3) - Waiting For Transaction Completion")
+        setBackDropMessage("(5/5) - Waiting For Transaction Completion")
 
         await connection.confirmTransaction({
             blockhash,
@@ -131,7 +131,7 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
 
     try {
         console.log('uploading ipfs');
-        setBackDropMessage("(1/3) - Uploading NFT Image IPFS")
+        setBackDropMessage("(1/5) - Uploading NFT Image IPFS")
         setLoading(true)
         const imgFileIpfs = await ipfsClient.add(query.img.file)
         const imageIpfsUrl = `${IPFS_GATEWAY_GET}/${imgFileIpfs.path}`
@@ -144,7 +144,7 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
             }
         )
 
-        setBackDropMessage("(2/3) - Uploading NFT Metadata IPFS")
+        setBackDropMessage("(2/5) - Uploading NFT Metadata IPFS")
         const metaDataIpfs = await ipfsClient.add(metaDataJSON)
         // alert(`Metadata Upload Complete (2/2)`)
         const metadataIpfsUrl = `${IPFS_GATEWAY_GET}/${metaDataIpfs.path}`
