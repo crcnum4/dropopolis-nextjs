@@ -1,5 +1,5 @@
 import {ChangeEventHandler, FC, FormEventHandler} from 'react';
-import { NftUploadQuery, NftUploadErrors } from '../../pages/upload/ipfs';
+import { ArtNftUploadErrors, ArtNftUploadQuery } from '../../types/ArtNft';
 import Button from '../common/Button';
 import Form from '../common/Form';
 import ImageInput, { FileQuery } from '../common/ImageInput';
@@ -7,14 +7,14 @@ import InlineInputContainer from '../common/InlineInputContainer';
 import Input from '../common/Input';
 
 interface formProps {
-  query: NftUploadQuery,
-  error?: NftUploadErrors,
+  query: ArtNftUploadQuery,
+  error?: ArtNftUploadErrors,
   loading: boolean,
   onSubmit: FormEventHandler,
   onUpdate: (field: string, value: string | FileQuery) => void
 }
 
-const ImageUploadForm: FC<formProps> = (props) => {
+const NftUploadForm: FC<formProps> = (props) => {
   
   const {query, error, loading, onSubmit, onUpdate} = props;
 
@@ -40,6 +40,32 @@ const ImageUploadForm: FC<formProps> = (props) => {
           onChange={handleChange}
         />
       </InlineInputContainer>
+      <Input 
+          placeholder='Description'
+          id="description"
+          value={query.description}
+          required
+          onChange={handleChange}
+        />
+      <InlineInputContainer>
+        <Input 
+          placeholder='Resale Royalty %'
+          id="royalty"
+          type='number'
+          value={query.royalty}
+          min={0}
+          max={95}
+          required
+          onChange={handleChange}
+        />
+        <Input 
+          placeholder='Project URL'
+          id="externalUrl"
+          value={query.externalUrl}
+          required
+          onChange={handleChange}
+        />
+      </InlineInputContainer>
       <ImageInput 
         id='img'
         className='my-1'
@@ -48,10 +74,10 @@ const ImageUploadForm: FC<formProps> = (props) => {
         onUpdate={props.onUpdate}
       />
         
-      <Button>Upload Image</Button>
+      <Button>Create NFT</Button>
     </Form>
   )
 
 }
 
-export default ImageUploadForm;
+export default NftUploadForm;
