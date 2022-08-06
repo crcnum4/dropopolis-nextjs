@@ -8,11 +8,17 @@ type FormProps = {
 }
 
 const Form: FC<FormProps> = (props) => {
+
+
+
   return (
     <form 
     style={{...props.style}} 
     className={props.className || "flex flex-col text-center w-full mb-6 max-w-4xl"} 
-    onSubmit={props.onSubmit}
+    onSubmit={(e) => {
+      e.preventDefault();
+      props.onSubmit(e)
+    }}
     >
       {props.children}
     </form>
