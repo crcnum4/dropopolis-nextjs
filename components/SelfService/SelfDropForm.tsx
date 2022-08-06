@@ -34,7 +34,7 @@ const SelfDropForm: FC<formProps> = (props) => {
         <Input 
           placeholder='Symbol'
           id="symbol"
-          value={query.name}
+          value={query.symbol}
           onChange={handleChange}
         />
       </InlineInputContainer>
@@ -60,7 +60,7 @@ const SelfDropForm: FC<formProps> = (props) => {
           max={95}
         />
       </InlineInputContainer>
-      <Button>Submit</Button>
+      <Button style={{marginLeft: '0.75rem', marginTop: '1rem'}}>Submit</Button>
     </Form>
   )
 

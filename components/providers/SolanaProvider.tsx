@@ -11,7 +11,7 @@ import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { clusterApiUrl } from '@solana/web3.js';
 
 export const SolanaProvider: FC<{children: React.ReactNode}> = (props) => {
-  const network = process.env.CLUSTER === "devnet" ?
+  const network = process.env.NEXT_PUBLIC_SOLANA_CLUSTER === "devnet" ?
     WalletAdapterNetwork.Devnet : WalletAdapterNetwork.Mainnet;
 
   const endpoint = useMemo(() => {

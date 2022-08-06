@@ -5,4 +5,7 @@ export * from './getStakeConfigAccountKey';
 export * from './getStakeVaultKey';
 export * from './stakeNftInstruction';
 export * from './unstakeNftInstruction';
+export * from './createMintInstruction';
+export * from './createArtNftInstruction';
+export * from './mintNftToInstruction';
 export * from './utils';

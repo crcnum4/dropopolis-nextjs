@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import {FC, useState} from 'react';
-import logo from '../../public/assets/logo.png';
+import logo from '../../public/assets/Logo.png';
 import Button from '../common/Button';
 import {faBars, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 import { useWallet } from '@solana/wallet-adapter-react';
