@@ -155,8 +155,8 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
             uri: metadataIpfsUrl,
             resaleFee: parseInt(query.resaleFee)
         })
-        // console.log(imageIpfsUrl);
-        // console.log(metadataIpfsUrl);
+        console.log("Image IPFS URL:", imageIpfsUrl);
+        console.log("Metadata IPFS URL:", metadataIpfsUrl);
         // console.log(imgFileIpfs);
         // console.log(metaDataIpfs);
     
