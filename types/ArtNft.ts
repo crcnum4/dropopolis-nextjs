@@ -15,14 +15,25 @@ export interface ArtNftUploadQuery {
     symbol: string
     description: string
     externalUrl: string
-    royalty: number
+    resaleFee: string
     creators: ArtNftCreator[]
     attributes: ArtNftAttributes[]
 }
 
+export const initialArtNftUploadQuery : ArtNftUploadQuery = {
+    img: {url: ''},
+    name: "",
+    symbol: "",
+    description: "",
+    externalUrl: "",
+    resaleFee: "",
+    creators: [],
+    attributes: [],
+}
+
 export interface ArtNftCreator {
     address: string
-    share: string
+    share: number
 }
 
 export interface ArtNftAttributes {

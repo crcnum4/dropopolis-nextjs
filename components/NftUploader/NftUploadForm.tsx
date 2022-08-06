@@ -40,19 +40,21 @@ const NftUploadForm: FC<formProps> = (props) => {
           onChange={handleChange}
         />
       </InlineInputContainer>
+      <InlineInputContainer>
       <Input 
           placeholder='Description'
           id="description"
           value={query.description}
           required
           onChange={handleChange}
-        />
+      />
+      </InlineInputContainer>
       <InlineInputContainer>
         <Input 
-          placeholder='Resale Royalty %'
-          id="royalty"
+          placeholder='Resale resaleFee %'
+          id="resaleFee"
           type='number'
-          value={query.royalty}
+          value={query.resaleFee}
           min={0}
           max={95}
           required
@@ -66,6 +68,7 @@ const NftUploadForm: FC<formProps> = (props) => {
           onChange={handleChange}
         />
       </InlineInputContainer>
+      <InlineInputContainer>
       <ImageInput 
         id='img'
         className='my-1'
@@ -73,6 +76,7 @@ const NftUploadForm: FC<formProps> = (props) => {
         required
         onUpdate={props.onUpdate}
       />
+      </InlineInputContainer>
         
       <Button>Create NFT</Button>
     </Form>
