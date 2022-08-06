@@ -7,9 +7,11 @@ import Backdrop from "../../components/common/Backdrop";
 
 import { create } from 'ipfs-http-client'
 import { createMetadataJson } from "../../scripts/createMetadataJson";
-import { ArtNftUploadErrors, ArtNftUploadQuery } from "../../types/ArtNft";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { ArtNftUploadErrors, ArtNftUploadQuery, initialArtNftUploadQuery } from "../../types/ArtNft";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { createAndMintArtnNftTransaction } from "../../scripts/createAndMintNftTransaction";
+import { PublicKey } from "@solana/web3.js";
 
 const IPFS_GATEWAY_POST = process.env.NEXT_PUBLIC_IPFS_GATEWAY_POST
 const IPFS_GATEWAY_GET = process.env.NEXT_PUBLIC_IPFS_GATEWAY_GET
@@ -18,35 +20,38 @@ const UploadPage : NextPage = () => {
 const ipfsClient = create({url: IPFS_GATEWAY_POST})
 
   const [query, setQuery] = useState<ArtNftUploadQuery>({
-    img: {url: ''},
+    ...initialArtNftUploadQuery,
     name: "Test NFT 1",
     symbol: "TEST",
     description: "desc",
     externalUrl: "dropopolis.com",
-    royalty: 5,
-    creators: [],
-    attributes: [],
+    resaleFee: "5",
   })
+
   const [error, setError] = useState<ArtNftUploadErrors>({
-    img: {url: ''},
-    name: "",
-    symbol: "",
-    description: "",
-    externalUrl: "",
-    royalty: 5,
-    creators: [],
-    attributes: [],
+    ...initialArtNftUploadQuery,
     form: "",
   })
+
   const [loading, setLoading] = useState(false);
 
+  const [mintData, setMintData] = useState({
+    name: '',
+    symbol: '',
+    uri: '',
+    resaleFee: 0
+  })
 
-  const wallet = useWallet();
+  const [backDropMessage, setBackDropMessage] = useState("Loading");
+
+  const {connection} = useConnection();
+  const {publicKey, sendTransaction, signTransaction, signAllTransactions} = useWallet();
 
 
-  const onSubmit:FormEventHandler<Element> = (e) => {
+  const onSubmit:FormEventHandler<Element> = async (e) => {
     e.preventDefault();
-    uploadToServer()
+    await uploadToIpfs()
+    await mintNft()
   }
 
   const onUpdate = (field: string, value: string|FileQuery): void => {
@@ -56,41 +61,104 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
     })
   }
 
-  const uploadToServer = async () => {
-    if (!query.img.file || loading || !wallet.connected || !wallet.publicKey) return
-
+  const mintNft = async () => {
+    
     try {
-        console.log('uploading ipfs');
-        setLoading(true)
-        const imgFileIpfs = await ipfsClient.add(query.img.file)
-        const imageIpfsUrl = `${IPFS_GATEWAY_GET}/${imgFileIpfs.path}`
-        alert('IPFS Image Upload Complete (1/2)')
-        const metaDataJSON = createMetadataJson(
+        const programId = process.env.NEXT_PUBLIC_REEMETA_PROGRAM_ID;
+        if (!programId) {
+        alert("Program ID error contact support.");
+        return;
+        }
+        if (!publicKey) {
+        alert("You've been logged out. reconnect wallet");
+        return;
+        }
+        setBackDropMessage("(3/3) - Building NFT Mint Transaction")
+        const {mintKeys, tokenAccount, tx} = await createAndMintArtnNftTransaction(
+            connection,
+            publicKey,
+            new PublicKey(programId),
+            mintData
+        )
+        
+        const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
+        // tx.recentBlockhash = blockhash;
+        // tx.partialSign(mintKeys);
+        
+        setBackDropMessage("(4/3) - Waiting For Transaction Approval")
+        const signature = await sendTransaction(
+            tx, 
+            connection, 
             {
-                ...query,
-                img: {...query.img, url: imageIpfsUrl},
-                creators: [...query.creators, {address: wallet.publicKey.toString(), share: '100'}]
+                // skipPreflight: true,
+                signers: [mintKeys]
             }
         )
-        const metaDataIpfs = await ipfsClient.add(metaDataJSON)
-        alert(`Metadata Upload Complete (2/2)`)
+
+        setBackDropMessage("(4/3) - Waiting For Transaction Completion")
+
+        await connection.confirmTransaction({
+            blockhash,
+            lastValidBlockHeight,
+            signature
+        });
+
+        console.log(signature);
+        alert("NFT minted");
+
         setQuery({
             img: {url: ''},
             name: "",
             symbol: "",
             description: "",
             externalUrl: "",
-            royalty: 5,
+            resaleFee: "",
             creators: [],
             attributes: [],
         })
-
         setLoading(false)
+
+    } catch (error) {
+        console.log(error);
+        alert("An Error Occurred. See logs for details")
+        setLoading(false)
+    }
+    
+  }
+
+  const uploadToIpfs = async () => {
+    if (!query.img.file || loading || !publicKey) return
+
+    try {
+        console.log('uploading ipfs');
+        setBackDropMessage("(1/3) - Uploading NFT Image IPFS")
+        setLoading(true)
+        const imgFileIpfs = await ipfsClient.add(query.img.file)
+        const imageIpfsUrl = `${IPFS_GATEWAY_GET}/${imgFileIpfs.path}`
+        // alert('IPFS Image Upload Complete (1/2)')
+        const metaDataJSON = createMetadataJson(
+            {
+                ...query,
+                img: {...query.img, url: imageIpfsUrl},
+                creators: [...query.creators, {address: publicKey.toString(), share: 100}]
+            }
+        )
+
+        setBackDropMessage("(2/3) - Uploading NFT Metadata IPFS")
+        const metaDataIpfs = await ipfsClient.add(metaDataJSON)
+        // alert(`Metadata Upload Complete (2/2)`)
         const metadataIpfsUrl = `${IPFS_GATEWAY_GET}/${metaDataIpfs.path}`
-        console.log(imageIpfsUrl);
-        console.log(metadataIpfsUrl);
-        console.log(imgFileIpfs);
-        console.log(metaDataIpfs);
+
+        setMintData({
+            name: query.name,
+            symbol: query.symbol,
+            uri: metadataIpfsUrl,
+            resaleFee: parseInt(query.resaleFee)
+        })
+        // console.log(imageIpfsUrl);
+        // console.log(metadataIpfsUrl);
+        // console.log(imgFileIpfs);
+        // console.log(metaDataIpfs);
     
     } catch (error) {
         alert(error);
@@ -98,13 +166,9 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
         setLoading(false)
     }
 
+  };  
 
-  };
-
-  console.log("Wallet: ", wallet);
-  
-
-  if (!wallet.connected) return (
+  if (!publicKey) return (
     <div className='items-center my-12'>
         <h1 className='mb-5 text-xl font-bold' >You must connect your wallet to create an NFT</h1>
         <div className="w-fit"> 
@@ -118,7 +182,7 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
       <Backdrop 
         showBackdrop={loading}
         showLoading
-        message="Uploading Image"
+        message={backDropMessage}
       />
       <h1 className="text-4xl font-bold">
       Create An NFT
