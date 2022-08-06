@@ -22,7 +22,7 @@ type InputProps = {
 
 //some input types ie 'file' does not support modifying the 'value' prop. 
 //As we find other input types that do not support 'value' we can add them to this list and make them safe to use with this component
-const nonValueInputTypes: {[key: string]: number} = {file: 1} //using an object for n(1) searching
+// const nonValueInputs: {[key: string]: number} = {file: 1} //using an object for n(1) searching
 
 const Input: FC<InputProps> = (props) => {
 
@@ -45,7 +45,7 @@ const Input: FC<InputProps> = (props) => {
       placeholder={props.placeholder}
       onChange={props.onChange}
       required={props.disabled}
-      value={nonValueInputTypes[inputType] ? "" : props.value}
+      value={props.value}
       accept={props.accept}
       multiple={props.multiple}
       disabled={props.disabled}

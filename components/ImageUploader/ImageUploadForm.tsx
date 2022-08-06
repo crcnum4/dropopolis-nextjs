@@ -1,5 +1,5 @@
 import {ChangeEventHandler, FC, FormEventHandler} from 'react';
-import { ImageUploadQuery, ImageUploadErrors } from '../../pages/upload/ipfs';
+import { NftUploadQuery, NftUploadErrors } from '../../pages/upload/ipfs';
 import Button from '../common/Button';
 import Form from '../common/Form';
 import ImageInput, { FileQuery } from '../common/ImageInput';
@@ -7,8 +7,8 @@ import InlineInputContainer from '../common/InlineInputContainer';
 import Input from '../common/Input';
 
 interface formProps {
-  query: ImageUploadQuery,
-  error?: ImageUploadErrors,
+  query: NftUploadQuery,
+  error?: NftUploadErrors,
   loading: boolean,
   onSubmit: FormEventHandler,
   onUpdate: (field: string, value: string | FileQuery) => void

@@ -1,0 +1,37 @@
+import { NftUploadQuery } from "../pages/upload/ipfs"
+
+const exampleJson = {
+    "name": "The Future",
+    "symbol": "FDROP",
+    "description": "A real city in the Metaverse, built by & for YOU!",
+    "externalUrl": "http://dropopolis.com",
+    "properties": {
+      "files": [
+        {
+          "type": "IMAGE",
+          "uri": "https://www.dropopolis.io/dropopolis_home/background_e.png"
+        }
+      ],
+      "creators": [
+        {
+          "address": "G3rsKbhnAhxrbDFYpvBEGcrtyhpoUggtVosQRKPn8tAa",
+          "share": 100
+        }
+      ]
+    },
+    "attributes": [
+      {
+        "name": "background",
+        "value": "transparent"
+      },
+      {
+        "name": "environment",
+        "value": "future city"
+      }
+    ],
+    "mint": "TST32LiaGNVeUwVid7ssRMgibtRjuGmZaEYT8W8S4PGr"
+}
+
+export const createMetadataJson = (query: NftUploadQuery): string => {
+   return JSON.stringify(exampleJson, null, 2)
+}
