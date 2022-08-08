@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import Image from "next/image";
-import logo from '../../../public/assets/Logo.png'
+import logo from '../../../public/assets/logo.png'
 
 type AboutModuleProps = {
   style?: React.CSSProperties
