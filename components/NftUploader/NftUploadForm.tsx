@@ -1,12 +1,13 @@
-import {ChangeEventHandler, FC, FormEventHandler} from 'react';
+import {ChangeEventHandler, FC, FormEventHandler, MouseEventHandler} from 'react';
 import { ArtNftUploadErrors, ArtNftUploadQuery } from '../../types/ArtNft';
 import Button from '../common/Button';
 import Form from '../common/Form';
-import ImageInput, { FileQuery } from '../common/ImageInput';
 import InlineInputContainer from '../common/InlineInputContainer';
-import Input from '../common/Input';
+import Input, { FileQuery } from '../common/Input';
 
 interface formProps {
+  style?: React.CSSProperties
+  className?: string
   query: ArtNftUploadQuery,
   error?: ArtNftUploadErrors,
   loading: boolean,
@@ -16,16 +17,32 @@ interface formProps {
 
 const NftUploadForm: FC<formProps> = (props) => {
   
-  const {query, error, loading, onSubmit, onUpdate} = props;
+  const {query, error, loading, onSubmit, onUpdate, style, className} = props;
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     onUpdate(e.target.id, e.target.value)
   }
 
+  const handleFileChange:ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const imgData = e.target.files[0];
+      onUpdate(e.target.id, {file: imgData, url: URL.createObjectURL(imgData)});
+    }
+  };
+
+  const removeImage:MouseEventHandler<HTMLButtonElement> = (event) => {
+      onUpdate('img', {url: ''});
+  };
+
   return (
-    <Form onSubmit={onSubmit} >
+    <Form 
+      style={{...style}}
+      className={className || ""}
+      onSubmit={onSubmit} 
+    >
         <InlineInputContainer>
         <Input 
+          label='Name'
           placeholder='NFT Name'
           id="name"
           value={query.name}
@@ -33,6 +50,7 @@ const NftUploadForm: FC<formProps> = (props) => {
           onChange={handleChange}
         />
         <Input 
+          label='Symbol'
           placeholder='Symbol'
           id="symbol"
           value={query.symbol}
@@ -42,6 +60,7 @@ const NftUploadForm: FC<formProps> = (props) => {
       </InlineInputContainer>
       <InlineInputContainer>
       <Input 
+          label='Description'
           placeholder='Description'
           id="description"
           value={query.description}
@@ -51,7 +70,8 @@ const NftUploadForm: FC<formProps> = (props) => {
       </InlineInputContainer>
       <InlineInputContainer>
         <Input 
-          placeholder='Resale resaleFee %'
+          label='Resale Fee %'
+          placeholder='Resale Fee %'
           id="resaleFee"
           type='number'
           value={query.resaleFee}
@@ -61,6 +81,7 @@ const NftUploadForm: FC<formProps> = (props) => {
           onChange={handleChange}
         />
         <Input 
+          label='Project URL'
           placeholder='Project URL'
           id="externalUrl"
           value={query.externalUrl}
@@ -69,16 +90,17 @@ const NftUploadForm: FC<formProps> = (props) => {
         />
       </InlineInputContainer>
       <InlineInputContainer>
-      <ImageInput 
-        id='img'
-        className='my-1'
-        value={query.img}
-        required
-        onUpdate={props.onUpdate}
-      />
+          <Input
+            label='NFT Image'
+            placeholder='NFT Image'
+            type='file'
+            id="img"
+            value={''}
+            required
+            onChange={handleFileChange}
+          />
       </InlineInputContainer>
-        
-      <Button>Create NFT</Button>
+      {/* <Button>Create NFT</Button> */}
     </Form>
   )
 
