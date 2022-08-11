@@ -1,6 +1,6 @@
 import React, {ChangeEventHandler, FC, Fragment} from 'react';
 
-type InputProps = {
+interface InputProps {
   error?: string,
   errorStyle?: React.CSSProperties,
   style?: React.CSSProperties,
@@ -20,6 +20,66 @@ type InputProps = {
   max?: number,
 }
 
+export interface FileQuery {
+  file?: File, 
+  url: string
+}
+
+interface Styles {
+  input: React.CSSProperties,
+  label: React.CSSProperties,
+  container: React.CSSProperties,
+  inputError: React.CSSProperties,
+  error: React.CSSProperties,
+}
+
+const styles: Styles = {
+  input: {
+    color: "#000",
+    backgroundColor: "#eee",
+    padding: 5,
+    fontSize: 18,
+    borderColor: "black",
+    borderWidth: 1,
+    width: "100%",
+    flex:1,
+    height: "auto",
+    minWidth: '100px',
+    borderRadius: '0.75rem',
+    margin: ".50rem 0"
+  },
+  label: {
+    textAlign: "left",
+    margin: "0 0.50rem",
+    fontWeight: 'bold',
+  },
+  container: {
+    flexDirection: "column",
+    justifyContent: "center",
+    // alignItems: "center",
+    width: "100%",
+  },
+  inputError: {
+    color: "#000",
+    backgroundColor: "#eee",
+    padding: 5,
+    fontSize: 18,
+    borderColor: "red",
+    borderWidth: 2,
+    width: "60%",
+    height: "auto",
+    flex: 1,
+  },
+  error: {
+    color: "red",
+    fontWeight: "bold",
+    paddingRight: 5,
+    paddingTop: 2,
+    paddingBottom: 3,
+    paddingLeft: 5,
+  },
+}
+
 //some input types ie 'file' does not support modifying the 'value' prop. 
 //As we find other input types that do not support 'value' we can add them to this list and make them safe to use with this component
 // const nonValueInputs: {[key: string]: number} = {file: 1} //using an object for n(1) searching
@@ -28,13 +88,23 @@ const Input: FC<InputProps> = (props) => {
 
   const inputType = props.type || "text"
 
+  const inputPropsStyle = 
+    props.error ? 
+    {...props.errorStyle} :
+    {...props.style} 
+  
+  const inputStyle = {
+    ...styles.input, 
+    ...inputPropsStyle
+  }
+
+  if (inputType === "file") {
+    inputStyle.color = 'transparent'
+  }
+
   const input = (
     <input 
-      style={
-        props.error ? 
-          {...props.errorStyle} :
-          {...props.style} 
-      }
+      style={{...inputStyle}}
       className={ props.error ? 
         props.errorClassName || "p-2 m-1 flex-1 border-red-500 border rounded-md"
         :
@@ -60,7 +130,7 @@ const Input: FC<InputProps> = (props) => {
     return (
       <Fragment>
         <div style={styles.container}>
-          <label htmlFor={props.id}>{props.label}</label>
+          <label htmlFor={props.id} style={styles.label}>{props.label}</label>
           {input}
         </div>
         {props.error ? errorLabel : null}
@@ -76,53 +146,5 @@ const Input: FC<InputProps> = (props) => {
   )
 }
 
-type Styles = {
-  input: React.CSSProperties,
-  container: React.CSSProperties,
-  inputError: React.CSSProperties,
-  error: React.CSSProperties,
-}
-
-const styles: Styles = {
-  input: {
-    color: "#000",
-    backgroundColor: "#eee",
-    padding: 5,
-    fontSize: 18,
-    borderColor: "black",
-    borderWidth: 1,
-    width: "100%",
-    flex:1,
-    height: "auto",
-    minWidth: '100px',
-    borderRadius: '0.75rem',
-    margin: "0.50rem 0"
-  },
-  container: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-  },
-  inputError: {
-    color: "#000",
-    backgroundColor: "#eee",
-    padding: 5,
-    fontSize: 18,
-    borderColor: "red",
-    borderWidth: 2,
-    width: "60%",
-    height: "auto",
-    flex: 1,
-  },
-  error: {
-    color: "red",
-    fontWeight: "bold",
-    paddingRight: 5,
-    paddingTop: 2,
-    paddingBottom: 3,
-    paddingLeft: 5,
-  },
-}
 
 export default Input;
