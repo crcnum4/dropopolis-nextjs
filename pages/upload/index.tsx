@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { FormEventHandler, useState } from "react";
-import { FileQuery } from "../../components/common/ImageInput";
+import { FileQuery } from "../../components/common/Input";
 import ImageUploadForm from "../../components/NftUploader/NftUploadForm";
 
 import Backdrop from "../../components/common/Backdrop";
@@ -12,6 +12,8 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { createAndMintArtnNftTransaction } from "../../scripts/createAndMintNftTransaction";
 import { PublicKey } from "@solana/web3.js";
+import PreviewNft from "../../components/NftUploader/PreviewNft";
+import Button from "../../components/common/Button";
 
 const IPFS_GATEWAY_POST = process.env.NEXT_PUBLIC_IPFS_GATEWAY_POST
 const IPFS_GATEWAY_GET = process.env.NEXT_PUBLIC_IPFS_GATEWAY_GET
@@ -21,11 +23,13 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
 
   const [query, setQuery] = useState<ArtNftUploadQuery>({
     ...initialArtNftUploadQuery,
-    name: "Test NFT 1",
-    symbol: "TEST",
-    description: "desc",
-    externalUrl: "dropopolis.com",
-    resaleFee: "5",
+
+    //UNCOMMENT THIS TO TEST WITH A PRE-FILLED FORM
+    // name: "Test NFT 1",
+    // symbol: "TEST",
+    // description: "desc",
+    // externalUrl: "dropopolis.com",
+    // resaleFee: "5",
   })
 
   const [error, setError] = useState<ArtNftUploadErrors>({
@@ -50,8 +54,8 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
 
   const onSubmit:FormEventHandler<Element> = async (e) => {
     e.preventDefault();
-    await uploadToIpfs()
-    await mintNft()
+    const uploadSuccess = await uploadToIpfs()
+    if (uploadSuccess) await mintNft()
   }
 
   const onUpdate = (field: string, value: string|FileQuery): void => {
@@ -126,8 +130,8 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
     
   }
 
-  const uploadToIpfs = async () => {
-    if (!query.img.file || loading || !publicKey) return
+  const uploadToIpfs = async ():Promise<boolean> => {
+    if (!query.img.file || loading || !publicKey) return false;
 
     try {
         console.log('uploading ipfs');
@@ -159,11 +163,14 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
         console.log("Metadata IPFS URL:", metadataIpfsUrl);
         // console.log(imgFileIpfs);
         // console.log(metaDataIpfs);
+
+        return true;
     
     } catch (error) {
         alert(error);
         console.log(error);
         setLoading(false)
+        return false
     }
 
   };  
@@ -177,6 +184,8 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
     </div>
   )
 
+  const previewDisplay = query.img.url ? 'initial' : 'none'
+
   return (
     <div className="container mx-auto mt-8">
       <Backdrop 
@@ -184,16 +193,43 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
         showLoading
         message={backDropMessage}
       />
-      <h1 className="text-4xl font-bold">
-      Create An NFT
+      <h1 className="text-4xl font-bold text-center">
+        Create An NFT
       </h1>
-      <ImageUploadForm
-        query={query} 
-        error={error}
-        loading={loading} 
-        onSubmit={onSubmit} 
-        onUpdate={onUpdate}
-      />
+      <div className="flex flex-row justify-between flex-wrap mt-6">
+        
+        <ImageUploadForm
+          query={query} 
+          error={error}
+          loading={loading} 
+          onSubmit={() => {}}
+          onUpdate={onUpdate}
+        />
+        
+        <div className="flex flex-col ">
+          <h1
+            style={{display: previewDisplay}}
+            className="text-2xl font-bold text-center mt-0"
+          >NFT Preview</h1>
+          <PreviewNft 
+            className=""
+            hoverable={false}
+            style={{display: previewDisplay}}
+            onClick={()=>{}}
+            token={{
+              name: query.name,
+              symbol: query.symbol,
+              description: query.description,
+              imgURL: query.img.url,
+              externalURL: query.externalUrl,
+            }}
+          />
+        </div>
+      </div>
+        <Button
+          style={ {margin: '0 auto', width: '100%'} }
+          onClick={onSubmit}
+        >Create NFT</Button>
      </div>
 
   )
