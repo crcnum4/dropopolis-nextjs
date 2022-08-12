@@ -123,7 +123,7 @@ const PreviewNft : FC<NftCardProps> = (props) => {
                 </div>
               </div>
               {externalURL ? (
-                  <a href={externalURL} target="_blank">
+                  <a href={externalURL} target="_blank" rel="noreferrer" >
                     <FontAwesomeIcon icon={faGlobeAmericas} size="1x" color="white"/>
                   </a>
                 ) : null
