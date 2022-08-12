@@ -77,6 +77,7 @@ const NftUploadForm: FC<formProps> = (props) => {
           value={query.resaleFee}
           min={0}
           max={95}
+          step={1}
           required
           onChange={handleChange}
         />

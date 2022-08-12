@@ -1,4 +1,4 @@
-import { FileQuery } from "../components/common/ImageInput"
+import { FileQuery } from "../components/common/Input"
 
 export interface ArtNftOffChainMeta {
     name: string
