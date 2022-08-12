@@ -8,24 +8,25 @@ import { TOKEN_PROGRAM_ID } from '@solana/spl-token2'
 import { keyFormat } from './utils'
 import { Serializer, Ux } from '../tools/serializer'
 
-export type createArtNftKeys = {
+export type CreateArtNftKeys = {
   metadataPda: PublicKey,
   mint: PublicKey,
   royaltyOwner: PublicKey,
   mintAuthority: PublicKey,
+  newMintAuthority: PublicKey,
   payer: PublicKey,
   updateAuthority: PublicKey,
   programId: PublicKey,
 }
 
-export type createArtNftData = {
+export type CreateArtNftData = {
   name: string,
   symbol: string,
   uri: string,
   resaleFee: number,
 }
 
-export const createArtNftInstruction = (keys: createArtNftKeys, data: createArtNftData): TransactionInstruction => {
+export const createArtNftInstruction = (keys: CreateArtNftKeys, data: CreateArtNftData): TransactionInstruction => {
   return new TransactionInstruction({
     programId: keys.programId,
     keys: [
@@ -35,6 +36,7 @@ export const createArtNftInstruction = (keys: createArtNftKeys, data: createArtN
       keyFormat.signOnly(keys.mintAuthority),
       keyFormat.full(keys.payer),
       keyFormat.readonly(keys.updateAuthority),
+      keyFormat.readonly(keys.newMintAuthority),
       keyFormat.readonly(SystemProgram.programId),
       keyFormat.readonly(SYSVAR_RENT_PUBKEY),
       keyFormat.readonly(TOKEN_PROGRAM_ID)

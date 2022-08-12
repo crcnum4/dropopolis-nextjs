@@ -4,15 +4,17 @@ import {
   createMintInstruction, 
   createArtNftInstruction, 
   mintNftToInstruction, 
-  createArtNftData
+  CreateArtNftData
 } from '../instructions';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, getAccount, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token2';
+import { addRoyaltyInstruction } from '../instructions/addRoyaltyInstruction';
 
 export const createAndMintArtnNftTransaction = async (
   connection: Connection,
   userWallet: PublicKey,
   programId: PublicKey,
-  nftData: createArtNftData,
+  nftData: CreateArtNftData,
+  dropopShare: number
 ): Promise<{mintKeys: Signer, tokenAccount: PublicKey, tx: Transaction}> => {
 
   const tx = new Transaction();
@@ -29,6 +31,7 @@ export const createAndMintArtnNftTransaction = async (
       mint: mintKeys.publicKey,
       royaltyOwner: userWallet,
       mintAuthority: userWallet,
+      newMintAuthority: userWallet,
       payer: userWallet,
       updateAuthority: userWallet,
       programId,
@@ -36,6 +39,22 @@ export const createAndMintArtnNftTransaction = async (
     nftData
   ));
 
+  const dropopPubkey = process.env.NEXT_PUBLIC_REE_SHARE_ADDRESS;
+
+
+  if (dropopPubkey) {
+
+    tx.add(addRoyaltyInstruction({
+        programId,
+        metadataPda,
+        payer: userWallet,
+        updateAuthority: userWallet,
+        newRoyalty: new PublicKey(dropopPubkey),
+      }, 
+      dropopShare
+    ))
+  }
+    
   const destinationTokenAccount = await getAssociatedTokenAddress(
     mintKeys.publicKey,
     userWallet,

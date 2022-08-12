@@ -56,7 +56,8 @@ const SelfService: NextPage = () => {
         symbol: query.symbol,
         uri: query.uri,
         resaleFee: parseInt(query.resaleFee)
-      }
+      },
+      5
     )
     
     const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
