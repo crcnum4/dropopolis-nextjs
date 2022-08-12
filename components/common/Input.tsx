@@ -18,6 +18,7 @@ interface InputProps {
   errorClassName?: string,
   min?: number,
   max?: number,
+  step?: number,
 }
 
 export interface FileQuery {
@@ -121,6 +122,7 @@ const Input: FC<InputProps> = (props) => {
       disabled={props.disabled}
       min={props.min}
       max={props.max}
+      step={props.step}
     />
   );
 
