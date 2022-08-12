@@ -1,12 +1,13 @@
 import React, {FC} from 'react';
 import BorderCardHover from '../../common/BorderCardHover';
 import Image from 'next/image';
-import profile from '../../../public/assets/profile.jpeg'
-import nft from '../../../public/assets/44.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faEllipsis} from '@fortawesome/free-solid-svg-icons'
 import dynamic from 'next/dynamic';
 import Button from '../../common/Button';
+
+const nft = '/assets/44.png'
+const profile = '/assets/profile.jpeg'
 const CDTimer = dynamic(import('./CDTimer'), {ssr: false});
 
 const currentDate = new Date();
@@ -51,10 +52,10 @@ const LiveDrop: FC<LiveDropProps> = (props) => {
         <FontAwesomeIcon icon={faEllipsis} size="lg" />
       </div>
       <div className="mx-8 my-4 bg-gray-300 rounded-xl relative" style={{minWidth: 200, maxHeight: 300, width: 'auto'}}>
-        <Image 
+        <img 
           alt="The Future is Now."
           src={nft}
-          objectFit="cover"
+          // objectFit="cover"
           className="rounded-xl"
         />
       </div>

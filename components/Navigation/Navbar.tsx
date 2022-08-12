@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import {FC, useState} from 'react';
-import logo from '../../public/assets/logo.png';
 import Button from '../common/Button';
 import {faBars, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -11,6 +10,7 @@ import NavMenu from './NavMenu';
 import Link from 'next/link';
 import NavLinks from './NavLinks';
 
+const logo = '/assets/logo.png';
 const Navbar: FC = () => {
   const [showMenu, setShowMenu] = useState(false)
   const router = useRouter();
@@ -21,7 +21,7 @@ const Navbar: FC = () => {
     <nav className="bg-white shadow-lg flex-row">
       <div className="flex-row md:mx-28 px-4 justify-between ">
           <div className="space-x-7 cursor-pointer justify-center" onClick={() => router.push('/')}>
-            <Image 
+            <img 
               alt="Dropopolis"
               src={logo}
             />
