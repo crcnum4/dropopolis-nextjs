@@ -1,0 +1,14 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/api/hello": "pages/api/hello.js",
+  "/": "pages/index.html",
+  "/new/drop": "pages/new/drop.html",
+  "/new/self": "pages/new/self.html",
+  "/test": "pages/test.html",
+  "/test/auth": "pages/test/auth.html",
+  "/upload": "pages/upload.html",
+  "/upload/ipfs": "pages/upload/ipfs.html",
+  "/_document": "pages/_document.js",
+  "/404": "pages/404.html"
+}
