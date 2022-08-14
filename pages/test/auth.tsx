@@ -1,62 +1,37 @@
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
+import b58 from 'bs58'
+import { AuthContext } from "../../components/providers/AuthProvider";
 
 const AuthTest: NextPage = () => {
-  const [nonce, setNonce] = useState("");
-
+  // const [nonce, setNonce] = useState("");
   const wallet = useWallet();
-  const {connection} = useConnection();
-
-  useEffect(() => {
-    const getNonce = async () => {
-      if (!wallet) {
-        return;
-      }
-
-      const url = "http://localhost:5000/api/accounts/";
-      try {
-        const res = await axios.post(url, {wallet: wallet.publicKey})
-        console.log(res.data.nonce);
-        setNonce(res.data.nonce)
-      } catch (err: Error | AxiosError<{message: string}> | any) {
-        if(axios.isAxiosError(err)) {
-          const error = err as AxiosError<{message: string}> ;
-          console.log(error.response?.data.message)
-          return
-        }
-
-        console.log(err);
-
-      }
-    }
-
-    getNonce();
-  }, [wallet]);
+  // const {publicKey} = wallet;
+  const {publicKey, nonce, signMessage} = useContext(AuthContext);
 
   const authenticate = async () => {
     const timestamp = new Date().getTime()
-
-    const message = `GET/accounts/myDetails${timestamp}${nonce}`
-    if (!wallet.signMessage) {
+    const userText = "Authenticate to get wallet detalis"
+    
+    const sig = await signMessage("GET", "/api/accounts/myDetails", userText);
+    
+    if (!sig) {
+      alert("Failed to sign authentication message");
       return;
     }
 
-    const sig = await (await wallet.signMessage(new TextEncoder().encode(message)))
-
-    console.log(JSON.stringify(sig))
-    console.log(sig.toString())
-
-    if (!wallet.publicKey) {
+    if (!publicKey) {
       return;
     }
     const url = `http://localhost:5000/api/accounts/myDetails`
     const res = await axios.get(url, {headers: {
-      "drop-pubkey": wallet.publicKey.toString(),
+      "drop-pubkey": publicKey.toBase58(),
       "drop-nonce": nonce,
-      "drop-signature": JSON.stringify(sig),
-      "drop-timestamp": timestamp
+      "drop-signature": b58.encode(sig),
+      "drop-timestamp": timestamp,
+      "drop-usertext": userText,
     }})
 
     console.log(res.data);
