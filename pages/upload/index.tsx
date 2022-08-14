@@ -19,7 +19,8 @@ const IPFS_GATEWAY_POST = process.env.NEXT_PUBLIC_IPFS_GATEWAY_POST
 const IPFS_GATEWAY_GET = process.env.NEXT_PUBLIC_IPFS_GATEWAY_GET
 
 const UploadPage : NextPage = () => {
-const ipfsClient = create({url: IPFS_GATEWAY_POST})
+  const ipfsClient = create({url: IPFS_GATEWAY_POST})
+  const isOnline = ipfsClient.isOnline()
 
   const [query, setQuery] = useState<ArtNftUploadQuery>({
     ...initialArtNftUploadQuery,
@@ -175,14 +176,25 @@ const ipfsClient = create({url: IPFS_GATEWAY_POST})
 
   };  
 
-  if (!publicKey) return (
-    <div className='items-center my-12'>
-        <h1 className='mb-5 text-xl font-bold' >You must connect your wallet to create an NFT</h1>
-        <div className="w-fit"> 
-            <WalletMultiButton />
-        </div>
-    </div>
-  )
+  if (!publicKey){ 
+    return (
+      <div className='items-center my-12'>
+          <h1 className='mb-5 text-xl font-bold' >You must connect your wallet to create an NFT</h1>
+          <div className="w-fit"> 
+              <WalletMultiButton />
+          </div>
+      </div>
+    )
+  } else if (!isOnline) {
+    return (
+      <div className='items-center my-12'>
+          <h1 className='mb-5 text-xl font-bold' >IPFS Uploading Service Can Not Connect</h1>
+          <div className="w-fit"> 
+              Please check your internet connection and try again. If the problem persists, contact support.
+          </div>
+      </div>
+    )
+  }
 
   const previewDisplay = query.img.url ? 'initial' : 'none'
 
