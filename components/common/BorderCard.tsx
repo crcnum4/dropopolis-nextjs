@@ -1,5 +1,4 @@
 import React, { FC, useState } from "react";
-import {borderCardStyle} from '../../styles/staticStyles'
 
 interface BorderCarProps {
     hover: boolean;
@@ -10,6 +9,17 @@ interface BorderCarProps {
     selfHover?: boolean;
     children: any;
     selected: boolean;
+}
+
+const borderCardStyle = {
+    card: {
+        borderRadius: 5,
+        marginBottom: 25,
+        padding: "0 8px",
+        width: "80%",
+        maxWidth: 500,
+        backgroundColor: "#f7f7f7",
+      } as React.CSSProperties,
 }
 
 const BorderCard : FC<BorderCarProps> = (props: BorderCarProps) => {
