@@ -1,9 +1,9 @@
 import Image from "next/image";
+import splashImg from '../../public/assets/background_e.png'
 import Button from "../common/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faCompass} from '@fortawesome/free-solid-svg-icons'
 import { FC } from "react";
-import splashImg from '../../public/assets/background_e.png'
 
 const Splash: FC = () => {
   return (

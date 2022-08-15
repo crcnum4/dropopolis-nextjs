@@ -1,19 +1,20 @@
 import {ChangeEventHandler, FC, FormEventHandler} from 'react';
-import { SelfDropFormQuery, SelfDropFormErrors } from './Single';
+import { NftUploadQuery, NftUploadErrors } from '../../pages/upload/ipfs';
 import Button from '../common/Button';
 import Form from '../common/Form';
+import ImageInput, { FileQuery } from '../common/ImageInput';
 import InlineInputContainer from '../common/InlineInputContainer';
 import Input from '../common/Input';
 
 interface formProps {
-  query: SelfDropFormQuery,
-  error?: SelfDropFormErrors,
+  query: NftUploadQuery,
+  error?: NftUploadErrors,
   loading: boolean,
   onSubmit: FormEventHandler,
-  onUpdate: (field: string, value: string) => void
+  onUpdate: (field: string, value: string | FileQuery) => void
 }
 
-const SelfDropForm: FC<formProps> = (props) => {
+const ImageUploadForm: FC<formProps> = (props) => {
   
   const {query, error, loading, onSubmit, onUpdate} = props;
 
@@ -23,7 +24,7 @@ const SelfDropForm: FC<formProps> = (props) => {
 
   return (
     <Form onSubmit={onSubmit} >
-      <InlineInputContainer>
+        <InlineInputContainer>
         <Input 
           placeholder='NFT Name'
           id="name"
@@ -35,35 +36,22 @@ const SelfDropForm: FC<formProps> = (props) => {
           placeholder='Symbol'
           id="symbol"
           value={query.symbol}
-          onChange={handleChange}
-        />
-      </InlineInputContainer>
-      <InlineInputContainer>
-        <Input 
-          placeholder='URL for NFT Metadata JSON File'
-          id="uri"
-          value={query.uri}
-          onChange={handleChange}
           required
-          type="url"
-        />
-      </InlineInputContainer>
-      <InlineInputContainer>
-        <Input 
-          placeholder='Resale Fee as a percentage'
-          id="resaleFee"
-          value={query.resaleFee}
           onChange={handleChange}
-          required
-          type="number"
-          min={0}
-          max={95}
         />
       </InlineInputContainer>
-      <Button style={{marginLeft: '0.75rem', marginTop: '1rem'}}>Submit</Button>
+      <ImageInput 
+        id='img'
+        className='my-1'
+        value={query.img}
+        required
+        onUpdate={props.onUpdate}
+      />
+        
+      <Button>Upload Image</Button>
     </Form>
   )
 
 }
 
-export default SelfDropForm;
+export default ImageUploadForm;

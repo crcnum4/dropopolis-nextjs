@@ -1,6 +1,6 @@
 import React, {ChangeEventHandler, FC, Fragment} from 'react';
 
-interface InputProps {
+type InputProps = {
   error?: string,
   errorStyle?: React.CSSProperties,
   style?: React.CSSProperties,
@@ -18,17 +18,66 @@ interface InputProps {
   errorClassName?: string,
   min?: number,
   max?: number,
-  step?: number,
 }
 
-export interface FileQuery {
-  file?: File, 
-  url: string
+//some input types ie 'file' does not support modifying the 'value' prop. 
+//As we find other input types that do not support 'value' we can add them to this list and make them safe to use with this component
+// const nonValueInputs: {[key: string]: number} = {file: 1} //using an object for n(1) searching
+
+const Input: FC<InputProps> = (props) => {
+
+  const inputType = props.type || "text"
+
+  const input = (
+    <input 
+      style={
+        props.error ? 
+          {...props.errorStyle} :
+          {...props.style} 
+      }
+      className={ props.error ? 
+        props.errorClassName || "p-2 m-1 flex-1 border-red-500 border rounded-md"
+        :
+        props.className || "p-2 m-1 flex-1 border rounded-md"
+      }
+      id={props.id}
+      type={inputType}
+      placeholder={props.placeholder}
+      onChange={props.onChange}
+      required={props.disabled}
+      value={props.value}
+      accept={props.accept}
+      multiple={props.multiple}
+      disabled={props.disabled}
+      min={props.min}
+      max={props.max}
+    />
+  );
+
+  const errorLabel = <p style={styles.error}>{props.error}</p>
+
+  if (props.label) {
+    return (
+      <Fragment>
+        <div style={styles.container}>
+          <label htmlFor={props.id}>{props.label}</label>
+          {input}
+        </div>
+        {props.error ? errorLabel : null}
+      </Fragment>
+    )
+  }
+
+  return (
+    <Fragment>
+      {input}
+      {props.error ? errorLabel : null}
+    </Fragment>
+  )
 }
 
-interface Styles {
+type Styles = {
   input: React.CSSProperties,
-  label: React.CSSProperties,
   container: React.CSSProperties,
   inputError: React.CSSProperties,
   error: React.CSSProperties,
@@ -47,17 +96,12 @@ const styles: Styles = {
     height: "auto",
     minWidth: '100px',
     borderRadius: '0.75rem',
-    margin: ".50rem 0"
-  },
-  label: {
-    textAlign: "left",
-    margin: "0 0.50rem",
-    fontWeight: 'bold',
+    margin: "0.50rem 0"
   },
   container: {
-    flexDirection: "column",
+    flexDirection: "row",
     justifyContent: "center",
-    // alignItems: "center",
+    alignItems: "center",
     width: "100%",
   },
   inputError: {
@@ -80,73 +124,5 @@ const styles: Styles = {
     paddingLeft: 5,
   },
 }
-
-//some input types ie 'file' does not support modifying the 'value' prop. 
-//As we find other input types that do not support 'value' we can add them to this list and make them safe to use with this component
-// const nonValueInputs: {[key: string]: number} = {file: 1} //using an object for n(1) searching
-
-const Input: FC<InputProps> = (props) => {
-
-  const inputType = props.type || "text"
-
-  const inputPropsStyle = 
-    props.error ? 
-    {...props.errorStyle} :
-    {...props.style} 
-  
-  const inputStyle = {
-    ...styles.input, 
-    ...inputPropsStyle
-  }
-
-  if (inputType === "file") {
-    inputStyle.color = 'transparent'
-  }
-
-  const input = (
-    <input 
-      style={{...inputStyle}}
-      className={ props.error ? 
-        props.errorClassName || "p-2 m-1 flex-1 border-red-500 border rounded-md"
-        :
-        props.className || "p-2 m-1 flex-1 border rounded-md"
-      }
-      id={props.id}
-      type={inputType}
-      placeholder={props.placeholder}
-      onChange={props.onChange}
-      required={props.disabled}
-      value={props.value}
-      accept={props.accept}
-      multiple={props.multiple}
-      disabled={props.disabled}
-      min={props.min}
-      max={props.max}
-      step={props.step}
-    />
-  );
-
-  const errorLabel = <p style={styles.error}>{props.error}</p>
-
-  if (props.label) {
-    return (
-      <Fragment>
-        <div style={styles.container}>
-          <label htmlFor={props.id} style={styles.label}>{props.label}</label>
-          {input}
-        </div>
-        {props.error ? errorLabel : null}
-      </Fragment>
-    )
-  }
-
-  return (
-    <Fragment>
-      {input}
-      {props.error ? errorLabel : null}
-    </Fragment>
-  )
-}
-
 
 export default Input;

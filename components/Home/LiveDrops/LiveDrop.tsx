@@ -1,12 +1,12 @@
 import React, {FC} from 'react';
 import BorderCardHover from '../../common/BorderCardHover';
 import Image from 'next/image';
+import profile from '../../../public/assets/profile.jpeg'
+import nft from '../../../public/assets/44.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faEllipsis} from '@fortawesome/free-solid-svg-icons'
 import dynamic from 'next/dynamic';
 import Button from '../../common/Button';
-import profile from '../../../public/assets/profile.jpeg'
-import nft from '../../../public/assets/44.png'
 const CDTimer = dynamic(import('./CDTimer'), {ssr: false});
 
 const currentDate = new Date();
