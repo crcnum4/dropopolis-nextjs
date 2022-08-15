@@ -50,7 +50,7 @@ const UploadPage : NextPage = () => {
   const [backDropMessage, setBackDropMessage] = useState("Loading");
 
   const {connection} = useConnection();
-  const {publicKey, sendTransaction, signTransaction, signAllTransactions} = useWallet();
+  const {publicKey, sendTransaction} = useWallet();
 
 
   const onSubmit:FormEventHandler<Element> = async (e) => {
@@ -83,7 +83,8 @@ const UploadPage : NextPage = () => {
             connection,
             publicKey,
             new PublicKey(programId),
-            mintData
+            mintData,
+            5
         )
         
         const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');

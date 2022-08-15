@@ -96,7 +96,7 @@ const PreviewNft : FC<NftCardProps> = (props) => {
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
         >
-            <img
+            <Image
                 width={width}
                 height={height}
                 src={imgURL}

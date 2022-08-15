@@ -9,7 +9,7 @@ const How: FC = () => {
       <InfoCard className="bg-blue-200/30" >
         <div className="flex-row justify-between mb-5">
           <IconHolder>
-            <img src="/assets/Solana.png" alt="solana" height={45} width={45} />
+            <Image src="/assets/Solana.png" alt="solana" height={45} width={45} />
           </IconHolder>
           <p className="text-blue-300/40 font-bold text-4xl">
             01

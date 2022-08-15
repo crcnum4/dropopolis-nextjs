@@ -3,7 +3,7 @@ import Button from "../common/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faCompass} from '@fortawesome/free-solid-svg-icons'
 import { FC } from "react";
-const splashImg = '/assets/background_e.png'
+import splashImg from '../../public/assets/background_e.png'
 
 const Splash: FC = () => {
   return (
@@ -27,7 +27,7 @@ const Splash: FC = () => {
           </Button>
         </div>
         <div className="flex-1 invisible md:visible">
-          <img 
+          <Image 
             alt="The Future is Now."
             src={splashImg}
             />

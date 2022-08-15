@@ -9,8 +9,8 @@ import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapte
 import NavMenu from './NavMenu';
 import Link from 'next/link';
 import NavLinks from './NavLinks';
+import logo from '../../public/assets/logo.png';
 
-const logo = '/assets/logo.png';
 const Navbar: FC = () => {
   const [showMenu, setShowMenu] = useState(false)
   const router = useRouter();
@@ -21,7 +21,7 @@ const Navbar: FC = () => {
     <nav className="bg-white shadow-lg flex-row">
       <div className="flex-row md:mx-28 px-4 justify-between ">
           <div className="space-x-7 cursor-pointer justify-center" onClick={() => router.push('/')}>
-            <img 
+            <Image 
               alt="Dropopolis"
               src={logo}
             />
