@@ -1,14 +1,21 @@
-import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { NextPage } from "next";
-import { useContext, useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
+
+import { FC, MouseEventHandler, useContext } from "react";
+import axios from "axios";
 import b58 from 'bs58'
 import { AuthContext } from "../../components/providers/AuthProvider";
+import Button from "./Button";
 
-const AuthTest: NextPage = () => {
-  // const [nonce, setNonce] = useState("");
-  const wallet = useWallet();
-  // const {publicKey} = wallet;
+
+type AuthButtonProps = {
+    type?: "button" | "submit" | "reset" | undefined,
+    style?: React.CSSProperties | undefined,
+    className?: string | undefined,
+    onClick?: MouseEventHandler,
+    disabled?: boolean | undefined,
+    children: React.ReactNode
+  }
+
+const AuthButton: FC<AuthButtonProps> = (props) => {
   const {publicKey, nonce, signMessage} = useContext(AuthContext);
 
   const authenticate = async () => {
@@ -25,7 +32,10 @@ const AuthTest: NextPage = () => {
     if (!publicKey) {
       return;
     }
-    const url = `http://localhost:5000/api/accounts/myDetails`
+
+    const apiHost = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:5000";
+
+    const url = `${apiHost}/api/accounts/myDetails`
     const res = await axios.get(url, {headers: {
       "drop-pubkey": publicKey.toBase58(),
       "drop-nonce": nonce,
@@ -34,21 +44,11 @@ const AuthTest: NextPage = () => {
       "drop-usertext": userText,
     }})
 
-    console.log(res.data);
   }
 
   return (
-    <div className="container mx-auto flex-col">
-      {!wallet ? (
-        <p>Connect the wallet</p>
-      ) : (
-        <>
-          <p>nonce: {nonce}</p>
-          <button onClick={authenticate}>get wallet data</button>
-        </>
-      )}
-    </div>
+    <Button onClick={authenticate}>Authenticate Your Wallet</Button>
   )
 }
 
-export default AuthTest;
+export default AuthButton;
