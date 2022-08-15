@@ -84,7 +84,7 @@ const UploadPage : NextPage = () => {
             publicKey,
             new PublicKey(programId),
             mintData,
-            5
+            8
         )
         
         const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
@@ -197,8 +197,6 @@ const UploadPage : NextPage = () => {
     )
   }
 
-  const previewDisplay = query.img.url ? 'initial' : 'none'
-
   return (
     <div className="container mx-auto mt-8">
       <Backdrop 
@@ -206,10 +204,10 @@ const UploadPage : NextPage = () => {
         showLoading
         message={backDropMessage}
       />
-      <h1 className="text-4xl font-bold text-center">
+      <h1 className="text-4xl font-bold text-center mt-6">
         Create An NFT
       </h1>
-      <div className="flex flex-row justify-between flex-wrap mt-6">
+      <div className="flex flex-row justify-center flex-wrap mt-6">
         
         <ImageUploadForm
           query={query} 
@@ -219,15 +217,13 @@ const UploadPage : NextPage = () => {
           onUpdate={onUpdate}
         />
         
-        <div className="flex flex-col ">
+        <div className="flex flex-col mx-10 ">
           <h1
-            style={{display: previewDisplay}}
             className="text-2xl font-bold text-center mt-0"
           >NFT Preview</h1>
           <PreviewNft 
             className=""
             hoverable={false}
-            style={{display: previewDisplay}}
             onClick={()=>{}}
             token={{
               name: query.name,

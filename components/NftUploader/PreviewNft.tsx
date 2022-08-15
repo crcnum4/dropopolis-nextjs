@@ -6,10 +6,12 @@ import Spinner from "../common/Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe, faGlobeAmericas } from "@fortawesome/free-solid-svg-icons";
 
+const nftPlaceholder = "/assets/nft-placeholder.png";
+
 interface NftCardProps {
     hoverable: boolean;
     className: string;
-    style: {};
+    style?: {};
     onClick: () => void;
     token: PreviewNftTokenData;
 }
@@ -48,7 +50,7 @@ const PreviewNft : FC<NftCardProps> = (props) => {
     
     const {name, symbol, imgURL, description, externalURL} = token
 
-    const [width, height] = [300, 400]
+    const [width, height] = [300, 300]
 
     if (!token) return (
       <BorderCard
@@ -96,14 +98,12 @@ const PreviewNft : FC<NftCardProps> = (props) => {
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
         >
-            <Image
-                width={width}
-                height={height}
-                src={imgURL}
+             <img
+                src={imgURL || nftPlaceholder}
                 style={{ objectFit: "contain", height:"auto" }}
                 alt={""}
             /> 
-
+          
           <div
             style={{
               display: "flex",
@@ -124,7 +124,7 @@ const PreviewNft : FC<NftCardProps> = (props) => {
               </div>
               {externalURL ? (
                   <a href={externalURL} target="_blank" rel="noreferrer" >
-                    <FontAwesomeIcon icon={faGlobeAmericas} size="1x" color="white"/>
+                    <FontAwesomeIcon icon={faGlobeAmericas} size="1x" color="black"/>
                   </a>
                 ) : null
               }
