@@ -26,11 +26,11 @@ const UploadPage : NextPage = () => {
     ...initialArtNftUploadQuery,
 
     //UNCOMMENT THIS TO TEST WITH A PRE-FILLED FORM
-    name: "Test NFT 1",
-    symbol: "TEST",
-    description: "desc",
-    externalUrl: "dropopolis.com",
-    resaleFee: "5",
+    // name: "Test NFT 1",
+    // symbol: "TEST",
+    // description: "desc",
+    // externalUrl: "dropopolis.com",
+    // resaleFee: "5",
   })
 
   const [error, setError] = useState<ArtNftUploadErrors>({
