@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler, useEffect, useState } from "react";
 import { FileQuery } from "../../components/common/Input";
 import ImageUploadForm from "../../components/NftUploader/NftUploadForm";
 
@@ -20,7 +20,17 @@ const IPFS_GATEWAY_GET = process.env.NEXT_PUBLIC_IPFS_GATEWAY_GET
 
 const UploadPage : NextPage = () => {
   const ipfsClient = create({url: IPFS_GATEWAY_POST})
-  const isOnline = ipfsClient.isOnline()
+  const [ipfsIsOnline, setIpfsIsOnline] = useState(false)
+  
+
+  useEffect(() => {
+    (async function checkIpfsStatus() {
+      const isOnline = await ipfsClient.isOnline();
+      console.log("IPFS Service is online: " + isOnline);
+      setIpfsIsOnline(isOnline)
+    })();
+  }, []);  
+  
 
   const [query, setQuery] = useState<ArtNftUploadQuery>({
     ...initialArtNftUploadQuery,
@@ -186,10 +196,10 @@ const UploadPage : NextPage = () => {
           </div>
       </div>
     )
-  } else if (!isOnline) {
+  } else if (!ipfsIsOnline) {
     return (
       <div className='items-center my-12'>
-          <h1 className='mb-5 text-xl font-bold' >IPFS Uploading Service Can Not Connect</h1>
+          <h1 className='mb-5 text-xl font-bold' >IPFS Uploading Service Can Not Connect Or Is Waiting To Connect</h1>
           <div className="w-fit"> 
               Please check your internet connection and try again. If the problem persists, contact support.
           </div>
