@@ -6,10 +6,13 @@ import { FileQuery } from "../common/ImageInput";
 interface BulkDropFormQuery {
   file: FileQuery,
   resaleFee: string,
-  mintOption: "creator" | "buyer"
+  mintOption: "creator" | "buyer",
+  collection: boolean,
+  collectionName: string,
+  collectionUrl: string,
 }
 
-interface BulkDropFormErrors extends Omit<BulkDropFormQuery, "file" | "mintOption"> {
+interface BulkDropFormErrors extends Omit<BulkDropFormQuery, "file" | "mintOption" | 'collection'> {
   file: string,
   form: string,
 }
@@ -20,12 +23,17 @@ const BulkSelfService: NextPage = () => {
   const [query, setQuery] = useState<BulkDropFormQuery>({
     file: {url: ""},
     resaleFee: "",
-    mintOption: "creator"
+    mintOption: "creator",
+    collection: false,
+    collectionName: "",
+    collectionUrl: '',
   })
   const [errors, setError] = useState<BulkDropFormErrors>({
     file: "",
     resaleFee: "",
-    form: ""
+    form: "",
+    collectionName: '',
+    collectionUrl: '',
   })
   const [loading, setLoading] = useState(false);
 
