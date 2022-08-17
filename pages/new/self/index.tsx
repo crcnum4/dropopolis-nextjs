@@ -1,5 +1,6 @@
 import { NextPage } from "next";
 import { useState } from "react";
+import BulkSelfService from "../../../components/SelfService/BulkSelfService";
 import SingleSelfService from "../../../components/SelfService/Single";
 
 const SelfService: NextPage = () => {
@@ -10,7 +11,7 @@ const SelfService: NextPage = () => {
       case "single":
         return <SingleSelfService />
       case "bulk":
-        return <></>
+        return <BulkSelfService />
     }
   }
 
