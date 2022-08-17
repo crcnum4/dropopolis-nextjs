@@ -1,5 +1,5 @@
 import {ChangeEventHandler, FC, FormEventHandler} from 'react';
-import {BulkDropFormErrors, BulkDropFormQuery} from './Bulk'
+import {BulkDropFormErrors, BulkDropFormQuery} from './BulkSelfService'
 import Button from '../common/Button';
 import Form from '../common/Form';
 import InlineInputContainer from '../common/InlineInputContainer'
