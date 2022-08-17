@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import { useState } from "react";
 import BulkSelfService from "../../../components/SelfService/BulkSelfService";
 import SingleSelfService from "../../../components/SelfService/Single";
+import Documentation from "../../../components/Documentation/Documentation";
 
 const SelfService: NextPage = () => {
   const [selection, setSelection] = useState<"single" | "bulk">("single");
@@ -17,7 +18,7 @@ const SelfService: NextPage = () => {
 
   return (
     <div className="container mx-auto">
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap w-1/2 p-4 mx-auto">
         <ul className="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row">
           <li className="-mb-px mr2 last:mr-0 flex-auto text-center">
             <a 
@@ -62,6 +63,7 @@ const SelfService: NextPage = () => {
         </ul>
       </div>
       {displayContent()}
+      <Documentation />
     </div>
   )
 }

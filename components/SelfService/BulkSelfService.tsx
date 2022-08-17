@@ -3,6 +3,10 @@ import { NextPage } from "next";
 import { ChangeEventHandler, useState } from "react"
 import BulkSelfForm from "./BulkSelfForm";
 import {FileQuery} from '../common/Input';
+import OffChainMetadata from "../../types/OffChainMetadata";
+import { PublicKey, Signer, Transaction, sendAndConfirmRawTransaction } from "@solana/web3.js";
+import { SelfDropFormQuery } from "./Single";
+import { createAndMintArtnNftTransaction } from "../../scripts/createAndMintNftTransaction";
 
 export interface BulkDropFormQuery {
   file: FileQuery,
@@ -12,6 +16,7 @@ export interface BulkDropFormQuery {
   collectionName: string,
   collectionUrl: string,
   salePrice: string
+  imageUrl: String
 }
 
 export interface BulkDropFormErrors extends Omit<BulkDropFormQuery, "file" | "mintOption" | 'collection'> {
@@ -19,9 +24,11 @@ export interface BulkDropFormErrors extends Omit<BulkDropFormQuery, "file" | "mi
   form: string,
 }
 
+const stepMaps = {creatorIndividual: 5, creatorCollection: 6, buyer: 8}
+
 const BulkSelfService: NextPage = () => {
   const {connection} = useConnection()
-  const {publicKey, sendTransaction} = useWallet();
+  const {publicKey, sendTransaction, signAllTransactions} = useWallet();
   const [query, setQuery] = useState<BulkDropFormQuery>({
     file: {url: ""},
     resaleFee: "",
@@ -30,6 +37,7 @@ const BulkSelfService: NextPage = () => {
     collectionName: "",
     collectionUrl: '',
     salePrice: '',
+    imageUrl: '',
   })
   const [errors, setError] = useState<BulkDropFormErrors>({
     file: "",
@@ -38,12 +46,152 @@ const BulkSelfService: NextPage = () => {
     collectionName: '',
     collectionUrl: '',
     salePrice: '',
+    imageUrl: '',
   })
   const [loading, setLoading] = useState(false);
+  const [submitDetails, setSubmitDetails] = useState({description: ""})
+
+  const updateSubmit = (description: string) => {
+    setSubmitDetails({
+      description
+    })
+  }
 
   const onSubmit = async() => {
-    alert("submit");
+    
+    setSubmitDetails({
+      description: `(1/${stepMaps[query.mintOption]}) Processing Json File`,
+    })
+    setLoading(true);
+
+    const reader = new FileReader();
+    let data: SelfDropFormQuery[] = []
+    reader.addEventListener("load", e => {
+      data = JSON.parse(reader.result as string);
+      console.log(data);
+
+      switch (query.mintOption) {
+        case 'creatorIndividual':
+          processIndividualMints(data);
+          return;
+        case 'creatorCollection':
+          return;
+        case 'buyer':
+          return;
+        default: 
+          alert("error: bad mint option")
+          return;
+      }
+    })
+
+    if (!query.file.file) {
+      alert("file missing");
+      return;
+    }
+
+    reader.readAsText(query.file.file);
+
   }
+
+  const processIndividualMints = async (data: SelfDropFormQuery[]) => {
+     // step 2: create a transaction for each NFT creating the mint nft token account and minting
+    updateSubmit(`(2/${stepMaps[query.mintOption]}) processing NFT (0/${data.length})`)
+
+    const txs: Transaction[] = []
+    const mintSigners: Signer[] = []
+
+    const programId = process.env.NEXT_PUBLIC_REEMETA_PROGRAM_ID;
+    if (!programId) {
+      alert("Program ID error contact support.");
+      setLoading(false);
+      return;
+    }
+    if (!publicKey) {
+      alert("You've been logged out. reconnect wallet");
+      setLoading(false)
+      return;
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      const nft = data[i];
+      updateSubmit(`(2/${stepMaps[query.mintOption]}) processing NFT (${i+1}/${data.length})`)
+      const {mintKeys, tokenAccount, tx} = await createAndMintArtnNftTransaction(
+        connection,
+        publicKey,
+        new PublicKey(programId),
+        {
+          name: nft.name,
+          symbol: nft.symbol,
+          uri: nft.uri,
+          resaleFee: parseInt(query.resaleFee)
+        },
+        5
+      )
+      txs.push(tx);
+      mintSigners.push(mintKeys);
+    }
+
+    // step 3: have the user sign all the transactions.
+    updateSubmit(`(3/${stepMaps[query.mintOption]}) requesting signature`)
+    if(!signAllTransactions) {
+      alert("unsupported wallet")
+      setLoading(false);
+      return;
+    }
+
+    const signedTxs = await signAllTransactions(txs);
+
+    // step 4: sign the transactions with the mint
+    updateSubmit(`(4/${stepMaps[query.mintOption]}) Validating Transactions 0%`)
+    const finalTxs = signedTxs.map((tx, i) => {
+      updateSubmit(`(4/${stepMaps[query.mintOption]}) Validating Transactions ${
+        Math.floor(i + 1/signedTxs.length)
+      }%`)
+      tx.addSignature(mintSigners[i].publicKey, Buffer.from(mintSigners[i].secretKey))
+      return tx;
+    })
+
+    // step 5: send and confirm each transaction
+    const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
+    const sigs = []
+    for (let i = 0; i < finalTxs.length; i++) {
+      updateSubmit(`5/${stepMaps[query.mintOption]} Sending and confirming transaction ${i+1}/${finalTxs.length}`)
+      const sig = await connection.sendRawTransaction(finalTxs[i].serialize())
+      // do we have to wait for each transaction to confirm? or can we submit them 
+      // all one by one and due to the correct access rights they should be confirmed in order?
+      // otherwise this could cause a large rpc hit...
+      await connection.confirmTransaction({
+        blockhash,
+        lastValidBlockHeight,
+        signature: sig
+      })
+      sigs.push(sig)
+    }
+    updateSubmit("complete!");
+    setLoading(false);
+    console.log(sigs)
+  }
+    // step 1: process the json file and create an array of objects for the NFT data
+    // individual mints:
+   
+
+    // step 4: wait for the transaction to finish.
+
+    // collection mints:
+    // step 2: create the ReeCollection account
+    // step 3: sign the ReeCollection transaction
+    // step 4: create the transactions for all nfts adding them to the NFT collection
+    // step 5: sign all transactions
+    // step 6: wait for the transactions to finish processing
+
+    // buyer minting
+    // step 2: create an authority keypair
+    // step 3: create the ReeCollection account
+    // step 4: create an NFT deposit transaction.
+    // step 5: sign the transactions
+    // step 6: submit the transaction
+    // step 7: upload collection data to server.
+    // step 8: upload the nfts to the server. 
 
   const onUpdate = (field: string, value: string): void => {
     setQuery({
@@ -66,7 +214,7 @@ const BulkSelfService: NextPage = () => {
   }
 
   return (
-    <div className="container mx-auto mt-8">
+    <div className="container mx-auto mt-8 items-center">
       <h1 className="text-4xl font-bold">
         Self Service Bulk Creation
       </h1>

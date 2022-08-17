@@ -2,7 +2,6 @@ import { NextPage } from "next";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useState } from "react";
-import SelfDocumentation from "../../components/SelfService/Documentation";
 import SelfDropForm from "../../components/SelfService/SelfDropForm";
 import { createAndMintArtnNftTransaction } from "../../scripts/createAndMintNftTransaction";
 
@@ -41,10 +40,12 @@ const SingleSelfService: NextPage = () => {
     const programId = process.env.NEXT_PUBLIC_REEMETA_PROGRAM_ID;
     if (!programId) {
       alert("Program ID error contact support.");
+      setLoading(false)
       return;
     }
     if (!publicKey) {
       alert("You've been logged out. reconnect wallet");
+      setLoading(false)
       return;
     }
     const {mintKeys, tokenAccount, tx} = await createAndMintArtnNftTransaction(
@@ -100,7 +101,7 @@ const SingleSelfService: NextPage = () => {
   }
 
   return (
-    <div className="container mx-auto mt-8">
+    <div className="container mx-auto mt-8 items-center">
       <h1 className="text-4xl font-bold">
         Self Service Drop Creation
       </h1>
@@ -111,7 +112,7 @@ const SingleSelfService: NextPage = () => {
         onSubmit={onSubmit} 
         onUpdate={onUpdate}
       />
-      <SelfDocumentation />
+      
     </div>
 
   )

@@ -1,13 +1,11 @@
-
 import {FC} from 'react';
+import SyntaxHighlighter from 'react-syntax-highlighter';
 import exampleJson from './example.json';
-import SyntaxHighlighter from 'react-syntax-highlighter'
 
-const SelfDocumentation: FC = () => {
+const NftMetaDataJson: FC = () => {
   return (
     <>
     <hr />
-      <h2 className='text-3xl font-bold my-4'>Documentation</h2>
       <h3 className="text-2xl font-bold my-3">JSON File Keys</h3>
       <p>
         These keys are supported and recognized by the REE Network. 
@@ -62,4 +60,4 @@ const SelfDocumentation: FC = () => {
   )
 }
 
-export default SelfDocumentation;
+export default NftMetaDataJson

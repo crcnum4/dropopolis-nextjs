@@ -23,7 +23,7 @@ const ToggleFa: FC<ToggleProps> = (props) => {
 
   return (
     <div 
-      className="flex-1 cursor-pointer felx-row"
+      className="flex-1 cursor-pointer flex-row"
       onClick={props.onChange}
       id={props.id}
     >

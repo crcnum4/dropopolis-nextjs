@@ -34,7 +34,7 @@ const BulkSelfForm: FC<FormProps> = (props) => {
                 </p>
       case "buyer":
         return <p>Let the Buyer pay for the minting of the NFT when they purchase it.
-                  Dropopolis will generate a Gacha style minting page where a buyer pays a
+                  Dropopolis will generate a raffle style minting page where a buyer pays a
                   flat rate to get a random NFT minted to their wallet. 
                   {/* the rest could be added or put on a more details link to show up or
                   send to a documentation page
@@ -62,7 +62,7 @@ const BulkSelfForm: FC<FormProps> = (props) => {
           onChange={e => props.onUpdate('mintOption', "creatorCollection")}
         />
         <ToggleFa 
-          label='Buyer Minted Gacha'
+          label='Buyer Minted Raffle'
           active={query.mintOption === "buyer"}
           id="buyer"
           onChange={e => props.onUpdate('mintOption', "buyer")}
@@ -89,7 +89,16 @@ const BulkSelfForm: FC<FormProps> = (props) => {
             onChange={handleChange}
           />
         </InlineInputContainer>
+        <InlineInputContainer>
+            <Input 
+              placeholder='Header Image Url for Collection page'
+              value={query.imageUrl}
+              id="imageUrl"
+              onChange={handleChange}
+            />            
+          </InlineInputContainer>
         {query.mintOption === "buyer" ? (
+          <>
           <InlineInputContainer>
             <Input 
               placeholder='Sale Price per NFT in SOL'
@@ -99,6 +108,7 @@ const BulkSelfForm: FC<FormProps> = (props) => {
               onChange={handleChange}
             />
           </InlineInputContainer>
+          </>
         ): null}
       </>)
       : null}
@@ -116,10 +126,10 @@ const BulkSelfForm: FC<FormProps> = (props) => {
       </InlineInputContainer>
       <InlineInputContainer>
         <Input 
+          style={{color: 'black'}}
           placeholder='JSON file with array of NFT data'
           type="file"
           onChange={onFileChange}
-          value=''
           id="file"
           accept="application/JSON"
           required
