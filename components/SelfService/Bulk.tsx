@@ -1,7 +1,7 @@
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { NextPage } from "next";
 import { useState } from "react"
-import { FileQuery } from "../common/ImageInput";
+import { FileQuery } from "../common/Input";
 
 interface BulkDropFormQuery {
   file: FileQuery,
