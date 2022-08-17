@@ -4,6 +4,7 @@ import Button from '../common/Button';
 import Form from '../common/Form';
 import InlineInputContainer from '../common/InlineInputContainer';
 import Input, { FileQuery } from '../common/Input';
+import MultiTextInput from '../common/MultiTextInput';
 
 interface formProps {
   style?: React.CSSProperties
@@ -101,6 +102,15 @@ const NftUploadForm: FC<formProps> = (props) => {
             onChange={handleFileChange}
           />
       </InlineInputContainer>
+      <MultiTextInput
+        inputName='Creator'
+        values={query.creators}
+        addOneField={() => {}}
+        removeOneField={() => {}}
+        onChange={handleChange}
+
+      
+      />
       {/* <Button>Create NFT</Button> */}
     </Form>
   )

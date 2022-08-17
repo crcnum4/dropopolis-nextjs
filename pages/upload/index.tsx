@@ -156,7 +156,7 @@ const UploadPage : NextPage = () => {
             {
                 ...query,
                 img: {...query.img, url: imageIpfsUrl},
-                creators: [...query.creators, {address: publicKey.toString(), share: 100}]
+                // creators: [...query.creators, {address: publicKey.toString(), share: 100}]
             }
         )
 

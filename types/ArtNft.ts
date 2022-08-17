@@ -1,4 +1,5 @@
 import { FileQuery } from "../components/common/Input"
+import { MultiPartInput } from "../components/common/MultiTextInput"
 
 export interface ArtNftOffChainMeta {
     name: string
@@ -31,14 +32,21 @@ export const initialArtNftUploadQuery : ArtNftUploadQuery = {
     attributes: [],
 }
 
-export interface ArtNftCreator {
-    address: string
-    share: number
+
+export interface ArtNftCreator extends MultiPartInput {
+   name: string | 'creator'
+   fields: [
+        {key: 'address', value: string},
+        {key: 'share', value: number},
+   ]
 }
 
-export interface ArtNftAttributes {
-    name: string
-    value: string
+export interface ArtNftAttributes extends MultiPartInput {
+    name: string | 'attribute'
+    fields: [
+            {key: 'name', value: string},
+            {key: 'value', value: string | number},
+    ]
 }
 
 export interface ArtNftProperties {
