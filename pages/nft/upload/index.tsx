@@ -17,7 +17,18 @@ import Button from "../../../components/common/Button";
 import { MultiPartInput } from "../../../components/common/MultiTextInput";
 
 const IPFS_GATEWAY_POST = process.env.NEXT_PUBLIC_IPFS_GATEWAY_POST
-const IPFS_GATEWAY_GET = process.env.NEXT_PUBLIC_IPFS_GATEWAY_GET
+const IPFS_GATEWAY_GET = process.env.NEXT_PUBLIC_IPFS_GATEWAY_GET || 'https://ipfs.io/ipfs'
+
+export interface NftMintData {
+  name: string
+  symbol: string
+  uri: string
+  resaleFee: number
+}
+
+interface MintError {
+  message: string
+}
 
 const UploadPage : NextPage = () => {
   const ipfsClient = create({url: IPFS_GATEWAY_POST})
@@ -46,11 +57,11 @@ const UploadPage : NextPage = () => {
       }
     ],
     //UNCOMMENT THIS TO TEST WITH A PRE-FILLED FORM
-    // name: "Test NFT 1",
-    // symbol: "TEST",
-    // description: "desc",
-    // externalUrl: "dropopolis.com",
-    // resaleFee: "5",
+    name: "Test NFT 1",
+    symbol: "TEST",
+    description: "desc",
+    externalUrl: "dropopolis.com",
+    resaleFee: "5",
   })
 
   const [error, setError] = useState<ArtNftUploadErrors>({
@@ -60,19 +71,13 @@ const UploadPage : NextPage = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [mintData, setMintData] = useState({
-    name: '',
-    symbol: '',
-    uri: '',
-    resaleFee: 0
-  })
-
   const [backDropMessage, setBackDropMessage] = useState("Loading");
 
   const onSubmit:FormEventHandler<Element> = async (e) => {
     e.preventDefault();
-    const uploadSuccess = await uploadToIpfs()
-    if (uploadSuccess) await mintNft()
+    const {uploadedIPFS, data} = await uploadToIpfs()
+    const isMintData = (x: any): x is NftMintData => x.name && x.symbol && x.uri && x.resaleFee;
+    if (uploadedIPFS && isMintData(data)) await mintNft(data)
   }
 
   const onUpdate = (field: string, value: string|FileQuery|MultiPartInput[]): void => {
@@ -82,7 +87,7 @@ const UploadPage : NextPage = () => {
     })
   }
 
-  const mintNft = async () => {
+  const mintNft = async (mintData: NftMintData) => {
     
     try {
         const programId = process.env.NEXT_PUBLIC_REEMETA_PROGRAM_ID;
@@ -125,26 +130,30 @@ const UploadPage : NextPage = () => {
             signature
         });
 
-        console.log(signature);
-        alert("NFT minted");
+        console.log(mintData);
+        const viewNFT = confirm("NFT minted. Would you like to view your NFT?");
 
-        setQuery({
-            img: {url: ''},
-            name: "",
-            symbol: "",
-            description: "",
-            externalUrl: "",
-            resaleFee: "",
-            creators: [
-                { name: 'creator',
-                  fields: [
-                    {key: 'address', value: publicKey.toString()},
-                    {key: 'share', value: 100}]
-                }
-            ],
-            attributes: [],
-        })
-        setLoading(false)
+        if (viewNFT) {
+          window.location.href = "/nft/ipfs" + mintData.uri.replace(IPFS_GATEWAY_GET, '');
+        } else {
+          setQuery({
+              img: {url: ''},
+              name: "",
+              symbol: "",
+              description: "",
+              externalUrl: "",
+              resaleFee: "",
+              creators: [
+                  { name: 'creator',
+                    fields: [
+                      {key: 'address', value: publicKey.toString()},
+                      {key: 'share', value: 100}]
+                  }
+              ],
+              attributes: [],
+          })
+          setLoading(false)
+        }
 
     } catch (error) {
         console.log(error);
@@ -154,8 +163,9 @@ const UploadPage : NextPage = () => {
     
   }
 
-  const uploadToIpfs = async ():Promise<boolean> => {
-    if (!query.img.file || loading || !publicKey) return false;
+  const uploadToIpfs = async ():Promise<{uploadedIPFS: boolean, data: NftMintData | MintError}> => {
+
+    if (!query.img.file || loading || !publicKey) return {uploadedIPFS: false, data: {message: "PreUpload Error"}};
 
     try {
         console.log('uploading ipfs');
@@ -179,24 +189,23 @@ const UploadPage : NextPage = () => {
         // alert(`Metadata Upload Complete (2/2)`)
         const metadataIpfsUrl = `${IPFS_GATEWAY_GET}/${metaDataIpfs.path}`
 
-        setMintData({
-            name: query.name,
-            symbol: query.symbol,
-            uri: metadataIpfsUrl,
-            resaleFee: parseInt(query.resaleFee)
-        })
         console.log("Image IPFS URL:", imageIpfsUrl);
         console.log("Metadata IPFS URL:", metadataIpfsUrl);
-        // console.log(imgFileIpfs);
-        // console.log(metaDataIpfs);
-
-        return true;
+        return {
+            uploadedIPFS: true,
+            data: {
+              name: query.name,
+              symbol: query.symbol,
+              uri: metadataIpfsUrl,
+              resaleFee: parseInt(query.resaleFee)
+          }
+        };
     
     } catch (error) {
         alert(error);
         console.log(error);
         setLoading(false)
-        return false
+        return {uploadedIPFS: false, data: {message: "IPFS Error:\b" + error}};
     }
 
   };  

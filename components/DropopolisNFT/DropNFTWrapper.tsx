@@ -19,19 +19,22 @@ const DropNFTWrapper : FC<DropNFTWrapperProps> = (props) => {
 
     const router = useRouter();
     const { hash:metaDataIpfsHash } = router.query;
+    console.log("metaDataIpfsHash: " + metaDataIpfsHash);
+    
     const apiUri = IPFS_GATEWAY_GET || 'https://ipfs.io/ipfs'
 
     useEffect(() => {
         const getMetadata = async () => {
+
             const url = `${apiUri}/${metaDataIpfsHash}`
-            console.log(url);
+            console.log("URL\n" + url);
             const res = await axios(url);
             setNftData(res.data)
         }
         getMetadata()
-    },[apiUri, metaDataIpfsHash])
+    },[apiUri, metaDataIpfsHash, nftData])
     
-    console.log('off-chain metadata\n', nftData)
+    // console.log('off-chain metadata\n', nftData)
 
     if (!nftData) return <div>Loading...</div>
 
