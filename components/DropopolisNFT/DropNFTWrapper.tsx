@@ -30,7 +30,7 @@ const DropNFTWrapper : FC<DropNFTWrapperProps> = (props) => {
             setNftData(res.data)
         }
         getMetadata()
-    },[])
+    },[apiUri, metaDataIpfsHash])
     
     console.log('off-chain metadata\n', nftData)
 
