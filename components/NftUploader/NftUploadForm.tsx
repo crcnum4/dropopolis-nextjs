@@ -1,6 +1,5 @@
 import {ChangeEventHandler, FC, FormEventHandler, MouseEventHandler} from 'react';
-import { ArtNftAttributesQuery, ArtNftCreatorQuery, ArtNftUploadErrors, ArtNftUploadQuery } from '../../types/ArtNft';
-import Button from '../common/Button';
+import { ArtNftUploadErrors, ArtNftUploadQuery } from '../../types/ArtNft';
 import Form from '../common/Form';
 import InlineInputContainer from '../common/InlineInputContainer';
 import Input, { FileQuery } from '../common/Input';
@@ -53,8 +52,6 @@ const NftUploadForm: FC<formProps> = (props) => {
   const removeCreator= (index: number) => {
     if (isNaN(index)) return;
     const newCreators = [...query.creators];
-    // console.log(newCreators, index);
-    
     newCreators.splice(index, 1)
     onUpdate('creators', newCreators);
   }
@@ -73,7 +70,6 @@ const NftUploadForm: FC<formProps> = (props) => {
   const removeAttribute= (index: number) => {
     if (isNaN(index)) return;
     const newAttributes = [...query.attributes];
-    // console.log(newAttributes, index);
     newAttributes.splice(index, 1)
     onUpdate('attributes', newAttributes);
   }
@@ -162,7 +158,6 @@ const NftUploadForm: FC<formProps> = (props) => {
         onChange={handleMultiChange}
       
       />
-      {/* <Button>Create NFT</Button> */}
     </Form>
   )
 

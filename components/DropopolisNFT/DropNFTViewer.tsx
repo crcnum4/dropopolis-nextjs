@@ -24,17 +24,6 @@ interface DropNFTViewerTokenData {
   imgURL: string
 }
 
-const nftCardBottomRowStyle = {
-  display: "flex",
-  flexDirection: "row",
-  position: "absolute",
-  justifyContent: "center",
-  alignItems: "bottom",
-  width: "90%",
-  transform: "translate(0%,200%)",
-  height: 'fit-content',
-} as React.CSSProperties;
-
 const DropNFTViewer : FC<NftCardProps> = (props) => {
     const [hover, setHover] = useState(false)
     

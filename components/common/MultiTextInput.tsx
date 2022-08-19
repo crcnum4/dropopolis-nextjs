@@ -34,13 +34,15 @@ const MultiTextInput: FC<MultiTextInputProps> = (props) => {
             return (
                 <div 
                     key={vIndex}
-                    className='mx-4 my-2 justify-center items-center flex flex-wrap flex-col'
+                    className='mx-4 my-2 justify-center items-center flex flex-wrap flex-col border-2 border-black rounded-md my-4'
                 >
                     <InlineInputContainer>
                         <label 
                             htmlFor={inputName + (vIndex+1)}
-                            className="text-lg font-bold"
-                        >{name}</label>
+                            className="text-lg font-bold mb-1"
+                        >
+                            {name}
+                        </label>
                         {fields.map(({key, value}, fIndex) => {
                             const keyName = key.substring(0, 1).toUpperCase() + key.substring(1);
                             // console.log(value);
@@ -80,6 +82,8 @@ const MultiTextInput: FC<MultiTextInputProps> = (props) => {
                         )}
                     </InlineInputContainer>
                     <Button 
+                        className="bg-red-500 hover:bg-red-700 text-white py-3 px-5 rounded-md w-fit my-5"
+
                         onClick={() => {
                             console.log('removeOneField', vIndex);
                             
@@ -95,7 +99,7 @@ const MultiTextInput: FC<MultiTextInputProps> = (props) => {
             })  
         }
         <Button
-            className="p-2 m-1 flex-1 border rounded-md mt-5"
+            className="p-3 m-1 flex-1 w-80 border rounded-md mt-2 bg-blue-500 hover:bg-blue-600 text-white self-center"
             onClick={addOneField}
         >
             Add {inputName}
