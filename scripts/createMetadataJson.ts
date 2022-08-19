@@ -14,9 +14,19 @@ export const createMetadataJson = (query: ArtNftUploadQuery): string => {
                 uri: query.img.url
                 }
             ],
-            creators: query.creators
+            creators: query.creators.map(creator => {
+                return {
+                    "address": creator.fields[0].value,
+                    "share": creator.fields[1].value as number,
+                }
+            })
         },
-        attributes: query.attributes
+        attributes: query.attributes.map(attribute => {
+            return {
+                "name": attribute.fields[0].value,
+                "value": attribute.fields[1].value,
+            }
+        })
    }
 
 

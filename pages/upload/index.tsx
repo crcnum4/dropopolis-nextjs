@@ -1,19 +1,20 @@
 import { NextPage } from "next";
 import { FormEventHandler, useEffect, useState } from "react";
 import { FileQuery } from "../../components/common/Input";
-import ImageUploadForm from "../../components/NftUploader/NftUploadForm";
+import NftUploadForm from "../../components/NftUploader/NftUploadForm";
 
 import Backdrop from "../../components/common/Backdrop";
 
 import { create } from 'ipfs-http-client'
 import { createMetadataJson } from "../../scripts/createMetadataJson";
-import { ArtNftUploadErrors, ArtNftUploadQuery, initialArtNftUploadQuery } from "../../types/ArtNft";
+import { ArtNftAttributesQuery, ArtNftCreatorQuery, ArtNftUploadErrors, ArtNftUploadQuery, initialArtNftUploadQuery } from "../../types/ArtNft";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { createAndMintArtnNftTransaction } from "../../scripts/createAndMintNftTransaction";
 import { PublicKey } from "@solana/web3.js";
 import PreviewNft from "../../components/NftUploader/PreviewNft";
 import Button from "../../components/common/Button";
+import { MultiPartInput } from "../../components/common/MultiTextInput";
 
 const IPFS_GATEWAY_POST = process.env.NEXT_PUBLIC_IPFS_GATEWAY_POST
 const IPFS_GATEWAY_GET = process.env.NEXT_PUBLIC_IPFS_GATEWAY_GET
@@ -22,6 +23,9 @@ const UploadPage : NextPage = () => {
   const ipfsClient = create({url: IPFS_GATEWAY_POST})
   const [ipfsIsOnline, setIpfsIsOnline] = useState(false)
   
+  const {connection} = useConnection();
+  const {publicKey, sendTransaction} = useWallet();
+
 
   useEffect(() => {
     (async function checkIpfsStatus() {
@@ -34,13 +38,19 @@ const UploadPage : NextPage = () => {
 
   const [query, setQuery] = useState<ArtNftUploadQuery>({
     ...initialArtNftUploadQuery,
-
+    creators: [
+      { name: 'creator',
+        fields: [
+          {key: 'address', value: publicKey != null ? publicKey.toString() : ''},
+          {key: 'share', value: 100}]
+      }
+    ],
     //UNCOMMENT THIS TO TEST WITH A PRE-FILLED FORM
-    // name: "Test NFT 1",
-    // symbol: "TEST",
-    // description: "desc",
-    // externalUrl: "dropopolis.com",
-    // resaleFee: "5",
+    name: "Test NFT 1",
+    symbol: "TEST",
+    description: "desc",
+    externalUrl: "dropopolis.com",
+    resaleFee: "5",
   })
 
   const [error, setError] = useState<ArtNftUploadErrors>({
@@ -59,17 +69,13 @@ const UploadPage : NextPage = () => {
 
   const [backDropMessage, setBackDropMessage] = useState("Loading");
 
-  const {connection} = useConnection();
-  const {publicKey, sendTransaction} = useWallet();
-
-
   const onSubmit:FormEventHandler<Element> = async (e) => {
     e.preventDefault();
     const uploadSuccess = await uploadToIpfs()
     if (uploadSuccess) await mintNft()
   }
 
-  const onUpdate = (field: string, value: string|FileQuery): void => {
+  const onUpdate = (field: string, value: string|FileQuery|MultiPartInput[]): void => {
     setQuery({
       ...query,
       [field]: value
@@ -129,7 +135,13 @@ const UploadPage : NextPage = () => {
             description: "",
             externalUrl: "",
             resaleFee: "",
-            creators: [],
+            creators: [
+                { name: 'creator',
+                  fields: [
+                    {key: 'address', value: publicKey.toString()},
+                    {key: 'share', value: 100}]
+                }
+            ],
             attributes: [],
         })
         setLoading(false)
@@ -156,9 +168,12 @@ const UploadPage : NextPage = () => {
             {
                 ...query,
                 img: {...query.img, url: imageIpfsUrl},
-                creators: [...query.creators, {address: publicKey.toString(), share: 100}]
+                // creators: [...query.creators, {address: publicKey.toString(), share: 100}]
             }
         )
+
+        console.log(metaDataJSON);
+        
 
         setBackDropMessage("(2/5) - Uploading NFT Metadata IPFS")
         const metaDataIpfs = await ipfsClient.add(metaDataJSON)
@@ -219,7 +234,7 @@ const UploadPage : NextPage = () => {
       </h1>
       <div className="flex flex-row justify-center flex-wrap mt-6">
         
-        <ImageUploadForm
+        <NftUploadForm
           query={query} 
           error={error}
           loading={loading} 
