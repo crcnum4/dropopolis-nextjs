@@ -17,8 +17,8 @@ export interface ArtNftUploadQuery {
     description: string
     externalUrl: string
     resaleFee: string
-    creators: ArtNftCreator[]
-    attributes: ArtNftAttributes[]
+    creators: ArtNftCreatorQuery[]
+    attributes: ArtNftAttributesQuery[]
 }
 
 export const initialArtNftUploadQuery : ArtNftUploadQuery = {
@@ -32,8 +32,18 @@ export const initialArtNftUploadQuery : ArtNftUploadQuery = {
     attributes: [],
 }
 
+export interface ArtNftCreator {
+    address: string
+    share: number
+}
 
-export interface ArtNftCreator extends MultiPartInput {
+
+export interface ArtNftAttributes {
+    name: string
+    value: string | number
+}
+
+export interface ArtNftCreatorQuery extends MultiPartInput {
    name: string | 'creator'
    fields: [
         {key: 'address', value: string},
@@ -41,7 +51,7 @@ export interface ArtNftCreator extends MultiPartInput {
    ]
 }
 
-export interface ArtNftAttributes extends MultiPartInput {
+export interface ArtNftAttributesQuery extends MultiPartInput {
     name: string | 'attribute'
     fields: [
             {key: 'name', value: string},

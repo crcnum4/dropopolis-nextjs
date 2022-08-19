@@ -14,11 +14,10 @@ interface MultiTextInputProps {
   style?: React.CSSProperties | undefined,
   className?: string | undefined,
   disabled?: boolean | undefined,
-//   fieldProps:  {name: string, value: string | number, type?: 'text' | 'number', min?: number, max?: number}[],
   values: MultiPartInput[]
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void, 
+  onChange: (field: string, value: MultiPartInput[]) =>void, 
   addOneField: () => void,
-  removeOneField: () => void,
+  removeOneField: (index: number) => void,
 }
 
 const MultiTextInput: FC<MultiTextInputProps> = (props) => {
@@ -26,39 +25,77 @@ const MultiTextInput: FC<MultiTextInputProps> = (props) => {
   const {values, onChange, addOneField, removeOneField, inputName} = props;
 
   return (
-    <div>
-        
-        {values.map(({fields, name}, index) => {
+    <div className='border rounded-md my-4'>
+        <h1 className="text-xl font-bold text-center mt-2">{inputName}s</h1>
+        {values.map(({fields, name}, vIndex) => {
+
+            name = name.substring(0, 1).toUpperCase() + name.substring(1)  + ' ' + (vIndex+1) || inputName;;
+
             return (
-                <div key={index}>
-                <InlineInputContainer>
-                    <label htmlFor={inputName + (index+1)}>{name}</label>
-                    {fields.map(({key, value}, index) => {
-                        return (
-                            <Input
-                                key={index}
-                                label={key}
-                                placeholder={key}
-                                id={key}
-                                value={value}
-                                onChange={onChange}
-                            />
-                        )
-                    }
-                    )}
-                </InlineInputContainer>
-                <Button 
-                    style={{...props.style}}
-                    className={props.className || "p-2 m-1 flex-1 border rounded-md"}
-                    onClick={removeOneField}
-                    disabled={props.disabled}
-                    children="-"
-                />
+                <div 
+                    key={vIndex}
+                    className='mx-4 my-2 justify-center items-center flex flex-wrap flex-col'
+                >
+                    <InlineInputContainer>
+                        <label 
+                            htmlFor={inputName + (vIndex+1)}
+                            className="text-lg font-bold"
+                        >{name}</label>
+                        {fields.map(({key, value}, fIndex) => {
+                            const keyName = key.substring(0, 1).toUpperCase() + key.substring(1);
+                            // console.log(value);
+                            
+                            return (
+                                <Input
+                                    className="p-2 m-1 flex-1 border rounded-md mt-5"
+                                    key={fIndex}
+                                    label={keyName}
+                                    placeholder={keyName}
+                                    id={key}
+                                    value={value}
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        
+                                        const field = `${inputName}s`.toLowerCase();
+                                        
+                                        const value = values.map(({fields:tempFields}, i) => {
+                                            if (vIndex != i) return {
+                                                name: values[vIndex].name,
+                                                fields:tempFields
+                                            }
+                                            return {
+                                                name: values[i].name,
+                                                fields: fields.map(({key, value}, i) => {
+                                                    if (fIndex != i) return {key, value};
+
+                                                    return {key, value: event.target.value};
+                                                })
+                                            }
+                                        })
+                                        
+                                        onChange(field, value)
+                                    }}
+                                />
+                            )
+                        }
+                        )}
+                    </InlineInputContainer>
+                    <Button 
+                        onClick={() => {
+                            console.log('removeOneField', vIndex);
+                            
+                            removeOneField(vIndex)
+                        }}
+                        disabled={props.disabled}
+                    >
+                        Remove {name}
+                    </Button>
+                
                 </div>
             )
             })  
         }
         <Button
+            className="p-2 m-1 flex-1 border rounded-md mt-5"
             onClick={addOneField}
         >
             Add {inputName}

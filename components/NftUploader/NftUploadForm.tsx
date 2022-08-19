@@ -1,10 +1,10 @@
 import {ChangeEventHandler, FC, FormEventHandler, MouseEventHandler} from 'react';
-import { ArtNftUploadErrors, ArtNftUploadQuery } from '../../types/ArtNft';
+import { ArtNftAttributesQuery, ArtNftCreatorQuery, ArtNftUploadErrors, ArtNftUploadQuery } from '../../types/ArtNft';
 import Button from '../common/Button';
 import Form from '../common/Form';
 import InlineInputContainer from '../common/InlineInputContainer';
 import Input, { FileQuery } from '../common/Input';
-import MultiTextInput from '../common/MultiTextInput';
+import MultiTextInput, { MultiPartInput } from '../common/MultiTextInput';
 
 interface formProps {
   style?: React.CSSProperties
@@ -13,7 +13,7 @@ interface formProps {
   error?: ArtNftUploadErrors,
   loading: boolean,
   onSubmit: FormEventHandler,
-  onUpdate: (field: string, value: string | FileQuery) => void
+  onUpdate: (field: string, value: string | FileQuery | MultiPartInput[]) => void
 }
 
 const NftUploadForm: FC<formProps> = (props) => {
@@ -31,10 +31,54 @@ const NftUploadForm: FC<formProps> = (props) => {
     }
   };
 
+  const handleMultiChange = (field: string, value: MultiPartInput[]) => {
+    onUpdate(field, value);
+  }
+
   const removeImage:MouseEventHandler<HTMLButtonElement> = (event) => {
       onUpdate('img', {url: ''});
   };
 
+  const addCreator = () => {
+    onUpdate('creators', [
+      ...query.creators, 
+    {
+      name: 'creator',
+      fields: [
+          {key: 'address', value: ''},
+          {key: 'share', value: 0},
+      ]
+    }]);
+  }
+  const removeCreator= (index: number) => {
+    if (isNaN(index)) return;
+    const newCreators = [...query.creators];
+    // console.log(newCreators, index);
+    
+    newCreators.splice(index, 1)
+    onUpdate('creators', newCreators);
+  }
+
+  const addAttribute = () => {
+    onUpdate('attributes', [
+      ...query.attributes, 
+    {
+      name: 'attribute',
+      fields: [
+        {key: 'name', value: ''},
+        {key: 'value', value: ''},
+      ]
+    }]);
+  }
+  const removeAttribute= (index: number) => {
+    if (isNaN(index)) return;
+    const newAttributes = [...query.attributes];
+    // console.log(newAttributes, index);
+    newAttributes.splice(index, 1)
+    onUpdate('attributes', newAttributes);
+  }
+
+  
   return (
     <Form 
       style={{...style}}
@@ -103,12 +147,19 @@ const NftUploadForm: FC<formProps> = (props) => {
           />
       </InlineInputContainer>
       <MultiTextInput
+        inputName='Attribute'
+        values={query.attributes}
+        addOneField={addAttribute}
+        removeOneField={removeAttribute}
+        onChange={handleMultiChange}
+      
+      />
+      <MultiTextInput
         inputName='Creator'
         values={query.creators}
-        addOneField={() => {}}
-        removeOneField={() => {}}
-        onChange={handleChange}
-
+        addOneField={addCreator}
+        removeOneField={removeCreator}
+        onChange={handleMultiChange}
       
       />
       {/* <Button>Create NFT</Button> */}
