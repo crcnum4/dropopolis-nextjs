@@ -1,10 +1,9 @@
 import React, { FC, useState } from "react";
 import BorderCard from "../common/BorderCard";
 
-import Image from "next/image";
 import Spinner from "../common/Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGlobe, faGlobeAmericas } from "@fortawesome/free-solid-svg-icons";
+import { faGlobeAmericas } from "@fortawesome/free-solid-svg-icons";
 
 const nftPlaceholder = "/assets/nft-placeholder.png";
 
