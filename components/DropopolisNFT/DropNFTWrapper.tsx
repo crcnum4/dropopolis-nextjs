@@ -1,10 +1,9 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import React, { FC, Fragment, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { ArtNftOffChainMeta } from "../../types/ArtNft";
 import DropNFTViewer from "./DropNFTViewer";
-const nftPlaceholder = "/assets/nft-placeholder.png";
 
 interface DropNFTWrapperProps {
     className?: string;

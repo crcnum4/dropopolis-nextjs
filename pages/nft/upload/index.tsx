@@ -1,20 +1,20 @@
 import { NextPage } from "next";
 import { FormEventHandler, useEffect, useState } from "react";
-import { FileQuery } from "../../components/common/Input";
-import NftUploadForm from "../../components/NftUploader/NftUploadForm";
+import { FileQuery } from "../../../components/common/Input";
+import NftUploadForm from "../../../components/NftUploader/NftUploadForm";
 
-import Backdrop from "../../components/common/Backdrop";
+import Backdrop from "../../../components/common/Backdrop";
 
 import { create } from 'ipfs-http-client'
-import { createMetadataJson } from "../../scripts/createMetadataJson";
-import { ArtNftAttributesQuery, ArtNftCreatorQuery, ArtNftUploadErrors, ArtNftUploadQuery, initialArtNftUploadQuery } from "../../types/ArtNft";
+import { createMetadataJson } from "../../../scripts/createMetadataJson";
+import { ArtNftUploadErrors, ArtNftUploadQuery, initialArtNftUploadQuery } from "../../../types/ArtNft";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { createAndMintArtnNftTransaction } from "../../scripts/createAndMintNftTransaction";
+import { createAndMintArtnNftTransaction } from "../../../scripts/createAndMintNftTransaction";
 import { PublicKey } from "@solana/web3.js";
-import PreviewNft from "../../components/NftUploader/PreviewNft";
-import Button from "../../components/common/Button";
-import { MultiPartInput } from "../../components/common/MultiTextInput";
+import PreviewNft from "../../../components/NftUploader/PreviewNft";
+import Button from "../../../components/common/Button";
+import { MultiPartInput } from "../../../components/common/MultiTextInput";
 
 const IPFS_GATEWAY_POST = process.env.NEXT_PUBLIC_IPFS_GATEWAY_POST
 const IPFS_GATEWAY_GET = process.env.NEXT_PUBLIC_IPFS_GATEWAY_GET
@@ -46,11 +46,11 @@ const UploadPage : NextPage = () => {
       }
     ],
     //UNCOMMENT THIS TO TEST WITH A PRE-FILLED FORM
-    name: "Test NFT 1",
-    symbol: "TEST",
-    description: "desc",
-    externalUrl: "dropopolis.com",
-    resaleFee: "5",
+    // name: "Test NFT 1",
+    // symbol: "TEST",
+    // description: "desc",
+    // externalUrl: "dropopolis.com",
+    // resaleFee: "5",
   })
 
   const [error, setError] = useState<ArtNftUploadErrors>({
@@ -168,7 +168,6 @@ const UploadPage : NextPage = () => {
             {
                 ...query,
                 img: {...query.img, url: imageIpfsUrl},
-                // creators: [...query.creators, {address: publicKey.toString(), share: 100}]
             }
         )
 
