@@ -34,7 +34,7 @@ const MultiTextInput: FC<MultiTextInputProps> = (props) => {
             return (
                 <div 
                     key={vIndex}
-                    className='mx-4 my-2 justify-center items-center flex flex-wrap flex-col border-2 border-black rounded-md my-4'
+                    className='mx-4 my-2 justify-center items-center flex flex-wrap flex-col border-2 border-black rounded-md'
                 >
                     <InlineInputContainer>
                         <label 
