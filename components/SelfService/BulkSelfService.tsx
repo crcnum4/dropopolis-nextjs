@@ -7,11 +7,14 @@ import OffChainMetadata from "../../types/OffChainMetadata";
 import { PublicKey, Signer, Transaction, sendAndConfirmRawTransaction } from "@solana/web3.js";
 import { SelfDropFormQuery } from "./Single";
 import { createAndMintArtnNftTransaction } from "../../scripts/createAndMintNftTransaction";
+import Backdrop from "../common/Backdrop";
+import { createCollectionTx } from "../../scripts/createCollectionTx";
+import { addItemToCollectionInstruction } from "../../instructions";
 
 export interface BulkDropFormQuery {
   file: FileQuery,
   resaleFee: string,
-  mintOption: "creatorIndividual" | "creatorCollection" | "buyer",
+  mintOption: "creatorIndividual" | "creatorCollection" | "buyer" | "buyerStore",
   collection: boolean,
   collectionName: string,
   collectionUrl: string,
@@ -24,7 +27,11 @@ export interface BulkDropFormErrors extends Omit<BulkDropFormQuery, "file" | "mi
   form: string,
 }
 
-const stepMaps = {creatorIndividual: 5, creatorCollection: 6, buyer: 8}
+export interface StoreQuery extends SelfDropFormQuery {
+  price: number;
+}
+
+const stepMaps = {creatorIndividual: 5, creatorCollection: 6, buyer: 8, buyerStore: 8}
 
 const BulkSelfService: NextPage = () => {
   const {connection} = useConnection()
@@ -78,6 +85,8 @@ const BulkSelfService: NextPage = () => {
           return;
         case 'buyer':
           return;
+        case 'buyerStore' :
+          return;
         default: 
           alert("error: bad mint option")
           return;
@@ -111,7 +120,7 @@ const BulkSelfService: NextPage = () => {
       setLoading(false)
       return;
     }
-
+    const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
     for (let i = 0; i < data.length; i++) {
       const nft = data[i];
       updateSubmit(`(2/${stepMaps[query.mintOption]}) processing NFT (${i+1}/${data.length})`)
@@ -127,6 +136,10 @@ const BulkSelfService: NextPage = () => {
         },
         5
       )
+      console.log(`tx ${i} created`)
+      tx.recentBlockhash = blockhash;
+      tx.lastValidBlockHeight = lastValidBlockHeight;
+      tx.feePayer = publicKey;
       txs.push(tx);
       mintSigners.push(mintKeys);
     }
@@ -139,7 +152,9 @@ const BulkSelfService: NextPage = () => {
       return;
     }
 
+    
     const signedTxs = await signAllTransactions(txs);
+    console.log('test');
 
     // step 4: sign the transactions with the mint
     updateSubmit(`(4/${stepMaps[query.mintOption]}) Validating Transactions 0%`)
@@ -147,12 +162,11 @@ const BulkSelfService: NextPage = () => {
       updateSubmit(`(4/${stepMaps[query.mintOption]}) Validating Transactions ${
         Math.floor(i + 1/signedTxs.length)
       }%`)
-      tx.addSignature(mintSigners[i].publicKey, Buffer.from(mintSigners[i].secretKey))
+      tx.partialSign(mintSigners[i])
       return tx;
     })
 
     // step 5: send and confirm each transaction
-    const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
     const sigs = []
     for (let i = 0; i < finalTxs.length; i++) {
       updateSubmit(`5/${stepMaps[query.mintOption]} Sending and confirming transaction ${i+1}/${finalTxs.length}`)
@@ -171,11 +185,97 @@ const BulkSelfService: NextPage = () => {
     setLoading(false);
     console.log(sigs)
   }
-    // step 1: process the json file and create an array of objects for the NFT data
-    // individual mints:
-   
 
-    // step 4: wait for the transaction to finish.
+  const processCollectionMints = async (data: SelfDropFormQuery[]) => {
+    let programId = process.env.NEXT_PUBLIC_REEMETA_PROGRAM_ID;
+    if (!programId) {
+      alert("Program ID error contact support.");
+      setLoading(false);
+      return;
+    }
+    if (!publicKey) {
+      alert("You've been logged out. reconnect wallet");
+      setLoading(false)
+      return;
+    }
+
+    updateSubmit(`2/${stepMaps[query.mintOption]} creating collection transaction`)
+    
+    const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
+    const [createColTx, collectionPda] = await createCollectionTx(
+      query.collectionName,
+      query.collectionUrl,
+      publicKey,
+    )
+    createColTx.feePayer = publicKey;
+    createColTx.recentBlockhash = blockhash;
+    createColTx.lastValidBlockHeight = lastValidBlockHeight;
+
+    const txs: Transaction[] = [createColTx];
+    const mintKeys: Signer[] = []
+
+    for (let i = 0; i < data.length; i++){
+      updateSubmit(`3/${stepMaps[query.mintOption]} processing NFT (${i+1}/${data.length})`)
+      const nft = data[i]
+      const {mintKeys, tokenAccount, tx} = await createAndMintArtnNftTransaction(
+        connection,
+        publicKey,
+        new PublicKey(programId),
+        {
+          name: nft.name,
+          symbol: nft.symbol,
+          uri: nft.uri,
+          resaleFee: parseInt(query.resaleFee)
+        },
+        5
+      )
+
+      tx.add(addItemToCollectionInstruction(
+        {
+          programId: new PublicKey(programId),
+          collectionPda,
+          payer: publicKey,
+          uploader: publicKey,
+          toAdd: mintKeys.publicKey,
+        },
+        // TODO allow self service user to add attributes or pull from the json file.
+        {
+          attributes: []
+        }
+      ))
+
+      tx.recentBlockhash = blockhash;
+      tx.lastValidBlockHeight = lastValidBlockHeight;
+      tx.feePayer = publicKey;
+      tx.partialSign(mintKeys);
+      txs.push(tx);
+    }
+
+    updateSubmit(`4/${stepMaps[query.mintOption]} requesting signature`)
+    if (!signAllTransactions) {
+      alert("Unsupported wallet");
+      setLoading(false);
+      return;
+    }
+
+    const signedTxs = await signAllTransactions(txs);
+
+    const sigs = []
+    for (let i = 0; i < signedTxs.length; i++) {
+      updateSubmit(`4/${stepMaps[query.mintOption]} sending and confirming transactions ${i+1}/${signedTxs.length}`)
+      const sig = await connection.sendRawTransaction(signedTxs[i].serialize())
+      await connection.confirmTransaction({
+        blockhash,
+        lastValidBlockHeight,
+        signature: sig
+      })
+      sigs.push(sig);
+    }
+    updateSubmit("Complete")
+    setLoading(false);
+    console.log(sigs);    
+
+  }
 
     // collection mints:
     // step 2: create the ReeCollection account
@@ -215,6 +315,11 @@ const BulkSelfService: NextPage = () => {
 
   return (
     <div className="container mx-auto mt-8 items-center">
+      <Backdrop 
+        showBackdrop={loading}
+        showLoading
+        message={submitDetails.description}
+      />
       <h1 className="text-4xl font-bold">
         Self Service Bulk Creation
       </h1>

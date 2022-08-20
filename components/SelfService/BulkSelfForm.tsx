@@ -42,6 +42,11 @@ const BulkSelfForm: FC<FormProps> = (props) => {
                   sol is needed for the ReeCollection data + 0.0001 sol per NFT for the 
                   storage of the NFT data on our servers.  */}
                 </p>
+      case "buyerStore":
+        return <p>Let the Buyer pay for the minting of the NFT when they purchase it.
+                  Dropopolis will generate a store front Minting page where the buyer
+                  can select a specific NFT to mint.
+                </p>
 
     }
   }
@@ -66,6 +71,12 @@ const BulkSelfForm: FC<FormProps> = (props) => {
           active={query.mintOption === "buyer"}
           id="buyer"
           onChange={e => props.onUpdate('mintOption', "buyer")}
+        />
+        <ToggleFa 
+          label="Buyer Minted Store"
+          active={query.mintOption === "buyerStore"}
+          id="buyerStore"
+          onChange={(e => props.onUpdate("mintOption", "buyerStore"))}
         />
       </InlineInputContainer>
       {displayMintOptionsDesc()}
