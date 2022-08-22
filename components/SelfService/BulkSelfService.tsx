@@ -82,6 +82,7 @@ const BulkSelfService: NextPage = () => {
           processIndividualMints(data);
           return;
         case 'creatorCollection':
+          processCollectionMints(data);
           return;
         case 'buyer':
           return;
@@ -188,7 +189,8 @@ const BulkSelfService: NextPage = () => {
 
   const processCollectionMints = async (data: SelfDropFormQuery[]) => {
     let programId = process.env.NEXT_PUBLIC_REEMETA_PROGRAM_ID;
-    if (!programId) {
+    let collectionProgramId = process.env.NEXT_PUBLIC_REECOLLECTION_PROGRAM_ID
+    if (!programId || !collectionProgramId) {
       alert("Program ID error contact support.");
       setLoading(false);
       return;
@@ -202,7 +204,9 @@ const BulkSelfService: NextPage = () => {
     updateSubmit(`2/${stepMaps[query.mintOption]} creating collection transaction`)
     
     const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
+    const txs: Transaction[] = [];
     const [createColTx, collectionPda] = await createCollectionTx(
+      new PublicKey(collectionProgramId),
       query.collectionName,
       query.collectionUrl,
       publicKey,
@@ -211,7 +215,7 @@ const BulkSelfService: NextPage = () => {
     createColTx.recentBlockhash = blockhash;
     createColTx.lastValidBlockHeight = lastValidBlockHeight;
 
-    const txs: Transaction[] = [createColTx];
+    txs.push(createColTx);
     const mintKeys: Signer[] = []
 
     for (let i = 0; i < data.length; i++){
@@ -232,7 +236,7 @@ const BulkSelfService: NextPage = () => {
 
       tx.add(addItemToCollectionInstruction(
         {
-          programId: new PublicKey(programId),
+          programId: new PublicKey(collectionProgramId),
           collectionPda,
           payer: publicKey,
           uploader: publicKey,
@@ -251,6 +255,7 @@ const BulkSelfService: NextPage = () => {
       txs.push(tx);
     }
 
+    console.log('transactions', txs.length)
     updateSubmit(`4/${stepMaps[query.mintOption]} requesting signature`)
     if (!signAllTransactions) {
       alert("Unsupported wallet");
@@ -259,10 +264,21 @@ const BulkSelfService: NextPage = () => {
     }
 
     const signedTxs = await signAllTransactions(txs);
+    console.log(signedTxs.length);
+
+    // for (let i = 0; i < signedTxs.length; i++) {
+    //   const res = await connection.simulateTransaction(signedTxs[i])
+    //   if (res.value.err) {
+    //     console.log(res.value);
+    //     continue;
+    //   }
+    //   console.log(i);
+    //   console.log(res.value);
+    // }
 
     const sigs = []
     for (let i = 0; i < signedTxs.length; i++) {
-      updateSubmit(`4/${stepMaps[query.mintOption]} sending and confirming transactions ${i+1}/${signedTxs.length}`)
+      updateSubmit(`5/${stepMaps[query.mintOption]} sending and confirming transactions ${i+1}/${signedTxs.length}`)
       const sig = await connection.sendRawTransaction(signedTxs[i].serialize())
       await connection.confirmTransaction({
         blockhash,
@@ -276,13 +292,6 @@ const BulkSelfService: NextPage = () => {
     console.log(sigs);    
 
   }
-
-    // collection mints:
-    // step 2: create the ReeCollection account
-    // step 3: sign the ReeCollection transaction
-    // step 4: create the transactions for all nfts adding them to the NFT collection
-    // step 5: sign all transactions
-    // step 6: wait for the transactions to finish processing
 
     // buyer minting
     // step 2: create an authority keypair

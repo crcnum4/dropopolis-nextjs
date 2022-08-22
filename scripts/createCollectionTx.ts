@@ -3,16 +3,17 @@ import { createCollectionInstruction, getCollectionPda } from "../instructions";
 
 
 export const createCollectionTx = async (
+  collectionProgramId: PublicKey,
   collectionName: string,
   collectionUri: string,
   publisher: PublicKey,
 ): Promise<[tx: Transaction, collectionPda: PublicKey]> => {
-  let collectionProgramId: String | PublicKey | undefined = process.env.NEXT_PUBLIC_REECOLLECTION_PROGRAM_ID;
+  // let collectionProgramId: String | PublicKey | undefined = process.env.NEXT_PUBLIC_REECOLLECTION_PROGRAM_ID;
 
   if (!collectionProgramId) {
     throw new Error("Missing collection program id");
   }
-  collectionProgramId = new PublicKey(collectionProgramId);
+  // collectionProgramId = new PublicKey(collectionProgramId);
 
   const [collectionPda, _] = await getCollectionPda(
     collectionName,
