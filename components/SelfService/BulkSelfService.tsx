@@ -31,7 +31,7 @@ export interface StoreQuery extends SelfDropFormQuery {
   price: number;
 }
 
-const stepMaps = {creatorIndividual: 5, creatorCollection: 6, buyer: 8, buyerStore: 8}
+const stepMaps = {creatorIndividual: 4, creatorCollection: 5, buyer: 8, buyerStore: 8}
 
 const BulkSelfService: NextPage = () => {
   const {connection} = useConnection()
@@ -141,8 +141,8 @@ const BulkSelfService: NextPage = () => {
       tx.recentBlockhash = blockhash;
       tx.lastValidBlockHeight = lastValidBlockHeight;
       tx.feePayer = publicKey;
+      tx.partialSign(mintKeys);
       txs.push(tx);
-      mintSigners.push(mintKeys);
     }
 
     // step 3: have the user sign all the transactions.
@@ -157,21 +157,11 @@ const BulkSelfService: NextPage = () => {
     const signedTxs = await signAllTransactions(txs);
     console.log('test');
 
-    // step 4: sign the transactions with the mint
-    updateSubmit(`(4/${stepMaps[query.mintOption]}) Validating Transactions 0%`)
-    const finalTxs = signedTxs.map((tx, i) => {
-      updateSubmit(`(4/${stepMaps[query.mintOption]}) Validating Transactions ${
-        Math.floor(i + 1/signedTxs.length)
-      }%`)
-      tx.partialSign(mintSigners[i])
-      return tx;
-    })
-
     // step 5: send and confirm each transaction
     const sigs = []
-    for (let i = 0; i < finalTxs.length; i++) {
-      updateSubmit(`5/${stepMaps[query.mintOption]} Sending and confirming transaction ${i+1}/${finalTxs.length}`)
-      const sig = await connection.sendRawTransaction(finalTxs[i].serialize())
+    for (let i = 0; i < signedTxs.length; i++) {
+      updateSubmit(`4/${stepMaps[query.mintOption]} Sending and confirming transaction ${i+1}/${signedTxs.length}`)
+      const sig = await connection.sendRawTransaction(signedTxs[i].serialize())
       // do we have to wait for each transaction to confirm? or can we submit them 
       // all one by one and due to the correct access rights they should be confirmed in order?
       // otherwise this could cause a large rpc hit...
@@ -216,7 +206,6 @@ const BulkSelfService: NextPage = () => {
     createColTx.lastValidBlockHeight = lastValidBlockHeight;
 
     txs.push(createColTx);
-    const mintKeys: Signer[] = []
 
     for (let i = 0; i < data.length; i++){
       updateSubmit(`3/${stepMaps[query.mintOption]} processing NFT (${i+1}/${data.length})`)
@@ -231,7 +220,8 @@ const BulkSelfService: NextPage = () => {
           uri: nft.uri,
           resaleFee: parseInt(query.resaleFee)
         },
-        5
+        5,
+        collectionPda,
       )
 
       tx.add(addItemToCollectionInstruction(

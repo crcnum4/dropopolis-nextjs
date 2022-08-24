@@ -14,7 +14,8 @@ export const createAndMintArtnNftTransaction = async (
   userWallet: PublicKey,
   programId: PublicKey,
   nftData: CreateArtNftData,
-  dropopShare: number
+  dropopShare: number,
+  collectionKey?: PublicKey,
 ): Promise<{mintKeys: Signer, tokenAccount: PublicKey, tx: Transaction}> => {
 
   const tx = new Transaction();
@@ -35,6 +36,7 @@ export const createAndMintArtnNftTransaction = async (
       payer: userWallet,
       updateAuthority: userWallet,
       programId,
+      collectionKey,
     },
     nftData
   ));

@@ -17,6 +17,7 @@ export type CreateArtNftKeys = {
   payer: PublicKey,
   updateAuthority: PublicKey,
   programId: PublicKey,
+  collectionKey?: PublicKey
 }
 
 export type CreateArtNftData = {
@@ -27,25 +28,33 @@ export type CreateArtNftData = {
 }
 
 export const createArtNftInstruction = (keys: CreateArtNftKeys, data: CreateArtNftData): TransactionInstruction => {
+
+  const keyList = [
+    keyFormat.writable(keys.metadataPda),
+    keyFormat.writable(keys.mint),
+    keyFormat.readonly(keys.royaltyOwner),
+    keyFormat.signOnly(keys.mintAuthority),
+    keyFormat.full(keys.payer),
+    keyFormat.readonly(keys.updateAuthority),
+    keyFormat.readonly(keys.newMintAuthority),
+    keyFormat.readonly(SystemProgram.programId),
+    keyFormat.readonly(SYSVAR_RENT_PUBKEY),
+    keyFormat.readonly(TOKEN_PROGRAM_ID)
+  ]
+
+  if (keys.collectionKey) {
+    keyList.push(keyFormat.readonly(keys.collectionKey))
+  }
+
   return new TransactionInstruction({
     programId: keys.programId,
-    keys: [
-      keyFormat.writable(keys.metadataPda),
-      keyFormat.writable(keys.mint),
-      keyFormat.readonly(keys.royaltyOwner),
-      keyFormat.signOnly(keys.mintAuthority),
-      keyFormat.full(keys.payer),
-      keyFormat.readonly(keys.updateAuthority),
-      keyFormat.readonly(keys.newMintAuthority),
-      keyFormat.readonly(SystemProgram.programId),
-      keyFormat.readonly(SYSVAR_RENT_PUBKEY),
-      keyFormat.readonly(TOKEN_PROGRAM_ID)
-    ],
+    keys: keyList,
     data: Buffer.concat([
       Serializer.number(0, Ux.U8),
       Serializer.number(1, Ux.U8),
       Serializer.number(1, Ux.U8),
       Serializer.number(1, Ux.U8),
+      Serializer.number((keys.collectionKey ? 1 : 0), Ux.U8),
       Serializer.string(data.name),
       Serializer.string(data.symbol),
       Serializer.string(data.uri),
