@@ -13,4 +13,5 @@ export * from './addPropertiesInstruction';
 export * from './createCollectionInstruction';
 export * from './lockCollectionInstruction';
 export * from './lockNftInstruction';
+export * from './createCollectionInstruction';
 export * from './utils';

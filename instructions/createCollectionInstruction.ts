@@ -17,6 +17,21 @@ export type CreateCollectionData = {
   uri: string,
 }
 
+export const getCollectionPda = async (
+  name: string,
+  programId: PublicKey,
+  publisherKey: PublicKey,
+) => {
+  const seeds: Buffer[] = [
+    Buffer.from("ree-collection"),
+    Buffer.from(name),
+    programId.toBuffer(),
+    publisherKey.toBuffer(),
+  ]
+
+  return await PublicKey.findProgramAddress(seeds, programId);
+}
+
 export const createCollectionInstruction = (
   keyList: CreateCollectionKeys, data: CreateCollectionData
 ): TransactionInstruction => {

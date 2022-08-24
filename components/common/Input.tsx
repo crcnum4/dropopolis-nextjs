@@ -9,7 +9,7 @@ interface InputProps {
   placeholder: string,
   onChange: ChangeEventHandler,
   required?: boolean,
-  value: any,
+  value?: any,
   accept?: string,
   multiple?: boolean,
   disabled?: boolean,
@@ -47,7 +47,7 @@ const styles: Styles = {
     height: "auto",
     minWidth: '100px',
     borderRadius: '0.75rem',
-    margin: ".50rem 0"
+    margin: ".50rem .5rem .5rem 0px"
   },
   label: {
     textAlign: "left",
@@ -105,7 +105,7 @@ const Input: FC<InputProps> = (props) => {
 
   const input = (
     <input 
-      style={{...inputStyle}}
+      style={{...inputStyle, ...props.style}}
       className={ props.error ? 
         props.errorClassName || "p-2 m-1 flex-1 border-red-500 border rounded-md"
         :

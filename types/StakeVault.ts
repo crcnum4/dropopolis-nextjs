@@ -34,17 +34,17 @@ export class StakeVault {
     const stakeVault = deserialize(SOLANA_SCHEMA, this, data);
 
     let offset = 1 + 32 + 32 + 32 + 8;
-    let remaining = data.slice(offset);
+    let remaining = data.subarray(offset);
     if (remaining[0] == 0) {
       return stakeVault;
     }
 
-    const stakeCount = remaining.slice(1, 5).readUint32LE();
-    remaining = remaining.slice(5);
+    const stakeCount = remaining.subarray(1, 5).readUint32LE();
+    remaining = remaining.subarray(5);
     for (let i = 0; i < stakeCount; i++) {
-      let stake = Stake.decode(remaining.slice(0, Stake.size))
+      let stake = Stake.decode(remaining.subarray(0, Stake.size))
       stakeVault.vault.push(stake);
-      remaining = remaining.slice(Stake.size)
+      remaining = remaining.subarray(Stake.size)
     }
 
     return stakeVault;
