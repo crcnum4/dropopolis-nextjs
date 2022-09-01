@@ -4,10 +4,13 @@ import { useContext, useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import b58 from 'bs58'
 import { AuthContext } from "../../components/providers/AuthProvider";
+import Button from "../../components/common/Button";
+import { getWalletNftCollection } from "../../scripts/getWalletNftCollection";
 
 const AuthTest: NextPage = () => {
   // const [nonce, setNonce] = useState("");
   const wallet = useWallet();
+  const {connection} = useConnection();
   // const {publicKey} = wallet;
   const {publicKey, nonce, signMessage} = useContext(AuthContext);
 
@@ -37,6 +40,14 @@ const AuthTest: NextPage = () => {
     console.log(res.data);
   }
 
+  const getTokenAcconts = async () => {
+    if (!wallet.publicKey) {
+      console.error("Login");
+      return
+    }
+    await getWalletNftCollection(wallet.publicKey, connection)
+  }
+
   return (
     <div className="container mx-auto flex-col">
       {!wallet ? (
@@ -45,6 +56,7 @@ const AuthTest: NextPage = () => {
         <>
           <p>nonce: {nonce}</p>
           <button onClick={authenticate}>get wallet data</button>
+          <Button onClick={getTokenAcconts}>get Token Accounts</Button>
         </>
       )}
     </div>
