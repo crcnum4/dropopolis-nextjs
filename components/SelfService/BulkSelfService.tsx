@@ -331,6 +331,11 @@ const BulkSelfService: NextPage = () => {
     let activeToken = token;
     if (!token) {
       activeToken = await authenticateWallet();
+      if (activeToken === "") {
+        alert("Failed to authenticate wallet")
+        setLoading(false);
+        return;
+      }
     }
 
     const res = await axios.post<DropCollection>(

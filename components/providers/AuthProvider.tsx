@@ -73,12 +73,12 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
     const sig = await signMessage("GET", "/api/accounts/authenticate", userText, timestamp);
     if (!sig) {
       alert("Failed to sign authentication message");
-      return;
+      return "";
     }
 
     if (!publicKey) {
       alert("Connect Wallet");
-      return;
+      return "";
     }
 
     const url = `http://localhost:5000/api/accounts/authenticate`
