@@ -48,13 +48,13 @@ const CollectionViewer: NextPage = () => {
                 console.log(nft);
 
                 
-                if (!nft.data || nft.kind !== NftKind.RoyaltyArt ) return null
+                if (!nft.data || !(nft.data instanceof RoyaltyArt) ) return null
                 
-
+                
 
             
                 return (
-                    <div>
+                    <div key={nft.mint.toString()}>
                         <DropNFTCardWrapper 
                             metaDataUri={nft.data.uri}
                         />    
