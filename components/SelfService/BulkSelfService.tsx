@@ -1,28 +1,36 @@
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { NextPage } from "next";
-import { ChangeEventHandler, useState } from "react"
+import { ChangeEventHandler, useContext, useState } from "react"
 import BulkSelfForm from "./BulkSelfForm";
 import {FileQuery} from '../common/Input';
 import OffChainMetadata from "../../types/OffChainMetadata";
-import { PublicKey, Signer, Transaction, sendAndConfirmRawTransaction } from "@solana/web3.js";
+import { PublicKey, Signer, Transaction, sendAndConfirmRawTransaction, Keypair } from "@solana/web3.js";
 import { SelfDropFormQuery } from "./Single";
 import { createAndMintArtnNftTransaction } from "../../scripts/createAndMintNftTransaction";
 import Backdrop from "../common/Backdrop";
 import { createCollectionTx } from "../../scripts/createCollectionTx";
 import { addItemToCollectionInstruction } from "../../instructions";
+import { DROPOPAPIHOST, REECOLLECTION_PROGRAM_ID, REEMETA_PROGRAM_ID } from "../../statics/programIds";
+import { CollectionNft } from "../../types/WalletCollection";
+import axios from "axios";
+import { AuthContext } from "../providers/AuthProvider";
+import base58 from "bs58";
+import { DropCollection } from "../../types/DropCollection";
+import { DropStore, DropStoreData, DropStoreItem, DropStoreItemData } from "../../types/DropStore";
 
 export interface BulkDropFormQuery {
   file: FileQuery,
   resaleFee: string,
-  mintOption: "creatorIndividual" | "creatorCollection" | "buyer" | "buyerStore",
+  mintOption: "creatorIndividual" | "creatorCollection" | "buyer" | "buyerStore" | "TCG",
   collection: boolean,
   collectionName: string,
   collectionUrl: string,
+  priceOption: "flat" | "file" | "dynamic",
   salePrice: string
   imageUrl: String
 }
 
-export interface BulkDropFormErrors extends Omit<BulkDropFormQuery, "file" | "mintOption" | 'collection'> {
+export interface BulkDropFormErrors extends Omit<BulkDropFormQuery, "file" | "mintOption" | 'collection' | 'priceOption'> {
   file: string,
   form: string,
 }
@@ -31,7 +39,7 @@ export interface StoreQuery extends SelfDropFormQuery {
   price: number;
 }
 
-const stepMaps = {creatorIndividual: 4, creatorCollection: 5, buyer: 8, buyerStore: 8}
+const stepMaps = {creatorIndividual: 4, creatorCollection: 5, buyer: 8, buyerStore: 8, TCG: 8}
 
 const BulkSelfService: NextPage = () => {
   const {connection} = useConnection()
@@ -43,6 +51,7 @@ const BulkSelfService: NextPage = () => {
     collection: false,
     collectionName: "",
     collectionUrl: '',
+    priceOption: "flat",
     salePrice: '',
     imageUrl: '',
   })
@@ -57,6 +66,7 @@ const BulkSelfService: NextPage = () => {
   })
   const [loading, setLoading] = useState(false);
   const [submitDetails, setSubmitDetails] = useState({description: ""})
+  const {token, authenticateWallet } = useContext(AuthContext)
 
   const updateSubmit = (description: string) => {
     setSubmitDetails({
@@ -87,6 +97,8 @@ const BulkSelfService: NextPage = () => {
         case 'buyer':
           return;
         case 'buyerStore' :
+          return;
+        case "TCG":
           return;
         default: 
           alert("error: bad mint option")
@@ -178,13 +190,8 @@ const BulkSelfService: NextPage = () => {
   }
 
   const processCollectionMints = async (data: SelfDropFormQuery[]) => {
-    let programId = process.env.NEXT_PUBLIC_REEMETA_PROGRAM_ID;
-    let collectionProgramId = process.env.NEXT_PUBLIC_REECOLLECTION_PROGRAM_ID
-    if (!programId || !collectionProgramId) {
-      alert("Program ID error contact support.");
-      setLoading(false);
-      return;
-    }
+    let programId = REEMETA_PROGRAM_ID;
+    let collectionProgramId = REECOLLECTION_PROGRAM_ID;
     if (!publicKey) {
       alert("You've been logged out. reconnect wallet");
       setLoading(false)
@@ -196,7 +203,7 @@ const BulkSelfService: NextPage = () => {
     const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
     const txs: Transaction[] = [];
     const [createColTx, collectionPda] = await createCollectionTx(
-      new PublicKey(collectionProgramId),
+      collectionProgramId,
       query.collectionName,
       query.collectionUrl,
       publicKey,
@@ -281,6 +288,124 @@ const BulkSelfService: NextPage = () => {
     setLoading(false);
     console.log(sigs);    
 
+  }
+
+  const processStoreCreation = async (data: SelfDropFormQuery[]) => {
+    let programId = REEMETA_PROGRAM_ID;
+    let collectionProgramId = REECOLLECTION_PROGRAM_ID;
+
+    if (!publicKey) {
+      alert("You've been loggd out. reconnect wallet");
+      setLoading(false);
+      return;
+    }
+
+    updateSubmit(`2/${stepMaps[query.mintOption]} creating collection transaction`);
+
+    const [createColTx, collectionPda] = await createCollectionTx(
+      collectionProgramId,
+      query.collectionName,
+      query.collectionUrl,
+      publicKey,
+    )
+
+    // create server side collection
+
+    const authority = Keypair.generate();
+
+    const serverCollectionData = {
+      pda: collectionPda.toString(),
+      urlName: query.collectionName.trim().replace(/\W/g, "_").toLowerCase(),
+      owner: publicKey.toString(),
+      name: query.collectionName,
+      shortDescription: "Placeholder data",
+      detailedDescription: "Placeholder Text",
+      headerImage: query.imageUrl,
+      //TODO move server side
+      authority: {
+        publicKey: authority.publicKey,
+        secret: authority.secretKey,
+      }
+    }
+
+    let activeToken = token;
+    if (!token) {
+      activeToken = await authenticateWallet();
+    }
+
+    const res = await axios.post<DropCollection>(
+      `${DROPOPAPIHOST}/collections`, 
+      serverCollectionData,
+      {
+        headers: {
+          "drop-token": activeToken,
+        }
+      }
+    )
+
+    // create the store
+    const storeData: DropStoreData = {
+      collection: res.data._id,
+      kind: 0,
+    }
+
+    if (query.priceOption === 'flat') {
+      storeData.price = parseInt(query.salePrice);
+    }
+
+    const storeRes = await axios.post<DropStore>(
+      `${DROPOPAPIHOST}/stores`,
+      storeData, 
+      {
+        headers: {
+          "drop-token": activeToken
+        }
+      }
+    )
+
+    // upload nfts;
+
+    const itemsList: DropStoreItemData[] = data.map(item => {
+      const itemData: DropStoreItemData ={
+        store: storeRes.data._id,
+        price: 0,
+        style: "Self",
+        name: item.name,
+        symbol: item.symbol,
+        resaleFee: parseInt(item.resaleFee),
+        jsonUrl: item.uri,
+      }
+      switch (query.priceOption) {
+        case "dynamic" :
+          break;
+        case "flat":
+          itemData.price = parseInt(query.salePrice);
+          break;
+        case "file":
+          if (!item.price) {
+            alert("Import file missing price. add price or change to Flat pricing");
+            throw new Error("Import File error");
+          }
+          itemData.price = item.price;
+      }
+      return itemData;
+    })
+
+    // upload items
+
+    const finalRes = await axios.post(
+      `${DROPOPAPIHOST}/items/${storeRes.data._id}`,
+      itemsList,
+      {
+        headers: {
+          "drop-token": activeToken,
+        }
+      }
+    )
+
+    alert("Complete");
+    setLoading(false);
+    // setQuery(defalutQ)
   }
 
     // buyer minting

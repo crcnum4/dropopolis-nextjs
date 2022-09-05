@@ -10,6 +10,7 @@ export interface SelfDropFormQuery {
   symbol: string,
   uri: string,
   resaleFee: string,
+  price?: number,
 }
 
 export interface SelfDropFormErrors extends SelfDropFormQuery {

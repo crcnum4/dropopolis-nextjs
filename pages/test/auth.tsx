@@ -18,7 +18,7 @@ const AuthTest: NextPage = () => {
     const timestamp = new Date().getTime()
     const userText = "Authenticate to get wallet detalis"
     
-    const sig = await signMessage("GET", "/api/accounts/myDetails", userText);
+    const sig = await signMessage("GET", "/api/accounts/myDetails", userText, timestamp);
     
     if (!sig) {
       alert("Failed to sign authentication message");

@@ -3,7 +3,7 @@ import { REEMETA_PROGRAM_ID } from '../statics/programIds';
 import { NftMetadata } from '../types/NftMetadata';
 import { getMetadataPda } from './getMetadataPda';
 
-const getNftMetadata = async(token: PublicKey, connection: Connection): Promise<NftMetadata | null> => {
+export const getNftMetadata = async(token: PublicKey, connection: Connection): Promise<NftMetadata | null> => {
   
   const nftPda = await getMetadataPda(token, REEMETA_PROGRAM_ID);
 

@@ -2,19 +2,27 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import axios, { AxiosError } from 'axios';
 import { Context, createContext, FC, PropsWithChildren, Provider, useEffect, useState } from 'react';
+import b58 from 'bs58'
 
 interface TAuthContext {
   publicKey: PublicKey | null,
   nonce: string,
   signMessage: (
-    method: "GET" | "POST" | "DELETE" | "PUT", endpoint: string, userText: string
+    method: "GET" | "POST" | "DELETE" | "PUT", 
+    endpoint: string, 
+    userText: string,
+    timestamp: number,
   ) => Promise<Uint8Array | null>,
+  authenticateWallet: () => Promise<string>,
+  token: string,
 }
 
 const defaultContext: TAuthContext = {
   publicKey: null,
   nonce: "",
-  signMessage: async () => {return null}
+  signMessage: async () => {return null},
+  authenticateWallet: async () => {return ""},
+  token: "",
 }
 
 export const AuthContext = createContext<TAuthContext>(defaultContext);
@@ -23,6 +31,7 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
   const wallet = useWallet();
   const [publicKey, setPublicKey] = useState(wallet.publicKey);
   const [nonce, setNonce] = useState("");
+  const [token, setToken] = useState("");
 
   // set publickey
   useEffect(() => {
@@ -58,6 +67,33 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
     }
   }
 
+  const authenticateWallet = async () => {
+    const timestamp = new Date().getTime()
+    const userText = "Authenticate wallet for secure actions";
+    const sig = await signMessage("GET", "/api/accounts/authenticate", userText, timestamp);
+    if (!sig) {
+      alert("Failed to sign authentication message");
+      return;
+    }
+
+    if (!publicKey) {
+      alert("Connect Wallet");
+      return;
+    }
+
+    const url = `http://localhost:5000/api/accounts/authenticate`
+    const res = await axios.get(url, {headers: {
+      "drop-pubkey": publicKey.toBase58(),
+      "drop-nonce": nonce,
+      "drop-signature": b58.encode(sig),
+      "drop-timestamp": timestamp,
+      "drop-usertext": userText,
+    }})
+
+    setToken(res.data);
+    return token;
+  }
+
   //update nonce if pubkey changes
   useEffect(() => {
     getNonce();
@@ -68,8 +104,9 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
     method: "GET" | "POST" | "DELETE" | "PUT",
     endpoint: string,
     userText: string,
+    timestamp: number,
   ) => {
-    const timestamp = new Date().getTime();
+    // const timestamp = new Date().getTime();
     const message = `${userText}\n${method}${endpoint}${timestamp}${nonce}`
 
     if (!publicKey) {
@@ -86,7 +123,7 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
   }
 
   return (
-    <AuthContext.Provider value={{publicKey, nonce, signMessage}}>
+    <AuthContext.Provider value={{publicKey, nonce, signMessage, authenticateWallet, token}}>
       {props.children}
     </AuthContext.Provider>
   )
