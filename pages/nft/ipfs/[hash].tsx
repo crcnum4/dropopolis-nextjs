@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
-import DropNFTWrapper from '../../../components/DropopolisNFT/DropNFTWrapper'
+import DropNftIpfsWrapper from '../../../components/DropopolisNFT/DropNftPageWrapper'
 
 const IpfsHashSearchPage: NextPage = () => {
 
@@ -9,7 +9,7 @@ const IpfsHashSearchPage: NextPage = () => {
             <h1 className="text-4xl font-bold text-center mt-6">
                 Search For An NFT By IPFS Metadata Hash
             </h1>
-            <DropNFTWrapper
+            <DropNftIpfsWrapper
                 className='mx-auto my-10 flex-row justify-between'
             />
             <Link href='/nft/upload'>

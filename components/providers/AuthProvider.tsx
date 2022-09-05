@@ -51,7 +51,7 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
     } catch (err: Error | AxiosError<{message: string}> | any) {
       if(axios.isAxiosError(err)) {
         const error = err as AxiosError<{message: string}> ;
-        console.log(error.response?.data.message)
+        console.log(error.response?.data?.message)
         return
       }
       console.log(err);

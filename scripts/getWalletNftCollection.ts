@@ -41,7 +41,7 @@ export const getWalletNftCollection = async (
   const mints: PublicKey[] = []
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i].account.data as ParsedAccountData;
-    console.log(`${account.parsed['info']['mint']}`);
+    // console.log(`${account.parsed['info']['mint']}`);
     const mint:string = account.parsed['info']['mint'];
     mints.push(await getMetadataPda(new PublicKey(mint), REEMETA_PROGRAM_ID))
   }
