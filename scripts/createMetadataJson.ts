@@ -1,4 +1,4 @@
-import { ArtNftOffChainMeta, ArtNftUploadQuery } from "../types/ArtNft"
+import { ArtNftOffChainMeta, ArtNftUploadQuery } from "../types/ArtNftForm"
 
 export const createMetadataJson = (query: ArtNftUploadQuery): string => {
 

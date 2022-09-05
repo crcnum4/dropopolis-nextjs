@@ -7,7 +7,7 @@ import Backdrop from "../../../components/common/Backdrop";
 
 import { create } from 'ipfs-http-client'
 import { createMetadataJson } from "../../../scripts/createMetadataJson";
-import { ArtNftUploadErrors, ArtNftUploadQuery, initialArtNftUploadQuery } from "../../../types/ArtNft";
+import { ArtNftUploadErrors, ArtNftUploadQuery, initialArtNftUploadQuery } from "../../../types/ArtNftForm";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { createAndMintArtnNftTransaction } from "../../../scripts/createAndMintNftTransaction";

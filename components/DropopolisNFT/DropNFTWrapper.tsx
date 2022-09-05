@@ -2,7 +2,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { ArtNftOffChainMeta } from "../../types/ArtNft";
+import { ArtNftOffChainMeta } from "../../types/ArtNftForm";
 import DropNFTViewer from "./DropNFTViewer";
 
 interface DropNFTWrapperProps {

@@ -63,7 +63,7 @@ export const getWalletNftCollection = async (
     nfts.push(NftMetadata.decode(nftAccountInfo))
   }
 
-  console.log(nfts);
+  // console.log(nfts);
 
   return nfts
 }

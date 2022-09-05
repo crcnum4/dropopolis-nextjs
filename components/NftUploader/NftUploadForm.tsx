@@ -1,5 +1,5 @@
 import {ChangeEventHandler, FC, FormEventHandler, MouseEventHandler} from 'react';
-import { ArtNftUploadErrors, ArtNftUploadQuery } from '../../types/ArtNft';
+import { ArtNftUploadErrors, ArtNftUploadQuery } from '../../types/ArtNftForm';
 import Form from '../common/Form';
 import InlineInputContainer from '../common/InlineInputContainer';
 import Input, { FileQuery } from '../common/Input';
