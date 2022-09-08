@@ -8,7 +8,7 @@ export enum DropStoreType {
 }
 
 export interface DropStoreData {
-  collection: string,
+  collect: string,
   kind: DropStoreType,
   price?: number,
   floor?: number,

@@ -92,7 +92,7 @@ const BulkSelfForm: FC<FormProps> = (props) => {
         /> */}
       </InlineInputContainer>
       {displayMintOptionsDesc()}
-      {query.mintOption === "buyer" || query.mintOption ==="creatorCollection" ?
+      {query.mintOption === "buyer" || query.mintOption ==="creatorCollection" || query.mintOption === "buyerStore" ?
       (<>
         <InlineInputContainer>
           <Input
@@ -113,14 +113,25 @@ const BulkSelfForm: FC<FormProps> = (props) => {
           />
         </InlineInputContainer>
         <InlineInputContainer>
-            <Input 
-              placeholder='Header Image Url for Collection page'
-              value={query.imageUrl}
-              id="imageUrl"
-              onChange={handleChange}
-            />            
-          </InlineInputContainer>
+          <Input 
+            placeholder='Header Image Url for Collection page'
+            value={query.imageUrl}
+            id="imageUrl"
+            onChange={handleChange}
+          />              
+        </InlineInputContainer>
         {query.mintOption === "buyer" ? (
+          <InlineInputContainer>
+            <Input 
+              placeholder='Sale Price per NFT in SOL'
+              value={query.salePrice}
+              id="salePrice"
+              required
+              onChange={handleChange}
+            />
+          </InlineInputContainer>
+        ): null}
+        {query.mintOption === "buyerStore" ? (
           <>
           <h1>Pricing option</h1>
           <InlineInputContainer>

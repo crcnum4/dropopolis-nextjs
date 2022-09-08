@@ -97,6 +97,7 @@ const BulkSelfService: NextPage = () => {
         case 'buyer':
           return;
         case 'buyerStore' :
+          processStoreCreation(data);
           return;
         case "TCG":
           return;
@@ -350,7 +351,7 @@ const BulkSelfService: NextPage = () => {
 
     // create the store
     const storeData: DropStoreData = {
-      collection: res.data._id,
+      collect: res.data._id,
       kind: 0,
     }
 
@@ -407,6 +408,25 @@ const BulkSelfService: NextPage = () => {
         }
       }
     )
+    
+    const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
+
+    createColTx.feePayer = publicKey;
+    createColTx.lastValidBlockHeight = lastValidBlockHeight;
+    createColTx.recentBlockhash = blockhash;
+
+    const sig = await sendTransaction(
+      createColTx,
+      connection,
+    )
+
+    await connection.confirmTransaction({
+      blockhash,
+      lastValidBlockHeight,
+      signature: sig
+    })
+
+    console.log(sig);
 
     alert("Complete");
     setLoading(false);

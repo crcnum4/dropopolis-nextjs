@@ -70,7 +70,7 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
   const authenticateWallet = async () => {
     const timestamp = new Date().getTime()
     const userText = "Authenticate wallet for secure actions";
-    const sig = await signMessage("GET", "/api/accounts/authenticate", userText, timestamp);
+    const sig = await signMessage("POST", "/api/accounts/authenticate", userText, timestamp);
     if (!sig) {
       alert("Failed to sign authentication message");
       return "";
@@ -82,7 +82,7 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
     }
 
     const url = `http://localhost:5000/api/accounts/authenticate`
-    const res = await axios.get(url, {headers: {
+    const res = await axios.post(url, {}, {headers: {
       "drop-pubkey": publicKey.toBase58(),
       "drop-nonce": nonce,
       "drop-signature": b58.encode(sig),
@@ -90,7 +90,7 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
       "drop-usertext": userText,
     }})
 
-    setToken(res.data);
+    setToken(res.data.token);
     return token;
   }
 

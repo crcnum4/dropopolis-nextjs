@@ -12,32 +12,16 @@ const AuthTest: NextPage = () => {
   const wallet = useWallet();
   const {connection} = useConnection();
   // const {publicKey} = wallet;
-  const {publicKey, nonce, signMessage} = useContext(AuthContext);
+  const { nonce, authenticateWallet, token} = useContext(AuthContext);
 
+  console.log(token);
   const authenticate = async () => {
-    const timestamp = new Date().getTime()
-    const userText = "Authenticate to get wallet detalis"
-    
-    const sig = await signMessage("GET", "/api/accounts/myDetails", userText, timestamp);
-    
-    if (!sig) {
-      alert("Failed to sign authentication message");
-      return;
-    }
+    if (!wallet || !wallet.publicKey) {
+      alert("Wallet not connected");
 
-    if (!publicKey) {
-      return;
     }
-    const url = `http://localhost:5000/api/accounts/myDetails`
-    const res = await axios.get(url, {headers: {
-      "drop-pubkey": publicKey.toBase58(),
-      "drop-nonce": nonce,
-      "drop-signature": b58.encode(sig),
-      "drop-timestamp": timestamp,
-      "drop-usertext": userText,
-    }})
-
-    console.log(res.data);
+    const activeToken = authenticateWallet();
+    console.log('activetoken', activeToken);
   }
 
   const getTokenAcconts = async () => {
