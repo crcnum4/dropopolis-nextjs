@@ -34,9 +34,9 @@ export const createArtNftInstruction = (keys: CreateArtNftKeys, data: CreateArtN
     keyFormat.writable(keys.mint),
     keyFormat.readonly(keys.royaltyOwner),
     keyFormat.signOnly(keys.mintAuthority),
+    keyFormat.readonly(keys.newMintAuthority),
     keyFormat.full(keys.payer),
     keyFormat.readonly(keys.updateAuthority),
-    keyFormat.readonly(keys.newMintAuthority),
     keyFormat.readonly(SystemProgram.programId),
     keyFormat.readonly(SYSVAR_RENT_PUBKEY),
     keyFormat.readonly(TOKEN_PROGRAM_ID)

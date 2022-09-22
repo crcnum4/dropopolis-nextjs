@@ -6,6 +6,7 @@ import b58 from 'bs58'
 import { AuthContext } from "../../components/providers/AuthProvider";
 import Button from "../../components/common/Button";
 import { getWalletNftCollection } from "../../scripts/getWalletNftCollection";
+import { Keypair } from "@solana/web3.js";
 
 const AuthTest: NextPage = () => {
   // const [nonce, setNonce] = useState("");
@@ -25,11 +26,13 @@ const AuthTest: NextPage = () => {
   }
 
   const getTokenAcconts = async () => {
-    if (!wallet.publicKey) {
-      console.error("Login");
-      return
-    }
-    await getWalletNftCollection(wallet.publicKey, connection)
+    // if (!wallet.publicKey) {
+    //   console.error("Login");
+    //   return
+    // }
+    // await getWalletNftCollection(wallet.publicKey, connection)
+
+    const keys = Keypair.generate();
   }
 
   return (

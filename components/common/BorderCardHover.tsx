@@ -3,7 +3,7 @@ import React, {CSSProperties, FC, MouseEventHandler, useState} from 'react';
 type BorderCardProps = {
   className?: string,
   children: React.ReactNode,
-  onClick: MouseEventHandler<HTMLDivElement>
+  onClick?: MouseEventHandler<HTMLDivElement>
 }
 
 const BorderCardHover: FC<BorderCardProps> = (props) => {

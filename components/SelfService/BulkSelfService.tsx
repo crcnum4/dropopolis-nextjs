@@ -6,7 +6,7 @@ import {FileQuery} from '../common/Input';
 import OffChainMetadata from "../../types/OffChainMetadata";
 import { PublicKey, Signer, Transaction, sendAndConfirmRawTransaction, Keypair } from "@solana/web3.js";
 import { SelfDropFormQuery } from "./Single";
-import { createAndMintArtnNftTransaction } from "../../scripts/createAndMintNftTransaction";
+import { createAndMintArtNftTransaction } from "../../scripts/createAndMintNftTransaction";
 import Backdrop from "../common/Backdrop";
 import { createCollectionTx } from "../../scripts/createCollectionTx";
 import { addItemToCollectionInstruction } from "../../instructions";
@@ -39,7 +39,7 @@ export interface StoreQuery extends SelfDropFormQuery {
   price: number;
 }
 
-const stepMaps = {creatorIndividual: 4, creatorCollection: 5, buyer: 8, buyerStore: 8, TCG: 8}
+const stepMaps = {creatorIndividual: 4, creatorCollection: 5, buyer: 8, buyerStore: 9, TCG: 8}
 
 const BulkSelfService: NextPage = () => {
   const {connection} = useConnection()
@@ -138,10 +138,11 @@ const BulkSelfService: NextPage = () => {
     for (let i = 0; i < data.length; i++) {
       const nft = data[i];
       updateSubmit(`(2/${stepMaps[query.mintOption]}) processing NFT (${i+1}/${data.length})`)
-      const {mintKeys, tokenAccount, tx} = await createAndMintArtnNftTransaction(
+      const {mintKeys, tx} = await createAndMintArtNftTransaction(
         connection,
         publicKey,
-        new PublicKey(programId),
+        publicKey,
+        REEMETA_PROGRAM_ID,
         {
           name: nft.name,
           symbol: nft.symbol,
@@ -218,10 +219,11 @@ const BulkSelfService: NextPage = () => {
     for (let i = 0; i < data.length; i++){
       updateSubmit(`3/${stepMaps[query.mintOption]} processing NFT (${i+1}/${data.length})`)
       const nft = data[i]
-      const {mintKeys, tokenAccount, tx} = await createAndMintArtnNftTransaction(
+      const {mintKeys, tx} = await createAndMintArtNftTransaction(
         connection,
         publicKey,
-        new PublicKey(programId),
+        publicKey,
+        REEMETA_PROGRAM_ID,
         {
           name: nft.name,
           symbol: nft.symbol,
@@ -292,7 +294,6 @@ const BulkSelfService: NextPage = () => {
   }
 
   const processStoreCreation = async (data: SelfDropFormQuery[]) => {
-    let programId = REEMETA_PROGRAM_ID;
     let collectionProgramId = REECOLLECTION_PROGRAM_ID;
 
     if (!publicKey) {
@@ -303,32 +304,32 @@ const BulkSelfService: NextPage = () => {
 
     updateSubmit(`2/${stepMaps[query.mintOption]} creating collection transaction`);
 
+    const collectionUrlFriendlyName = query.collectionName.trim().replace(/\W/g, "_").toLowerCase();
+
     const [createColTx, collectionPda] = await createCollectionTx(
       collectionProgramId,
-      query.collectionName,
+      collectionUrlFriendlyName,
       query.collectionUrl,
       publicKey,
     )
 
-    // create server side collection
-
     const authority = Keypair.generate();
+    // TODO: add another instruction to add the server authority as uploader and publisher.
+
+    // create server side collection 
+
 
     const serverCollectionData = {
       pda: collectionPda.toString(),
-      urlName: query.collectionName.trim().replace(/\W/g, "_").toLowerCase(),
+      urlName: collectionUrlFriendlyName,
       owner: publicKey.toString(),
       name: query.collectionName,
       shortDescription: "Placeholder data",
       detailedDescription: "Placeholder Text",
       headerImage: query.imageUrl,
-      //TODO move server side
-      authority: {
-        publicKey: authority.publicKey,
-        secret: authority.secretKey,
-      }
     }
 
+    updateSubmit(`3/${stepMaps[query.mintOption]} Getting Server Authentication Token`);
     let activeToken = token;
     if (!token) {
       activeToken = await authenticateWallet();
@@ -337,7 +338,10 @@ const BulkSelfService: NextPage = () => {
         setLoading(false);
         return;
       }
+      console.log(activeToken);
     }
+
+    updateSubmit(`4/${stepMaps[query.mintOption]} Creating Collection`);
 
     const res = await axios.post<DropCollection>(
       `${DROPOPAPIHOST}/collections`, 
@@ -359,9 +363,11 @@ const BulkSelfService: NextPage = () => {
       storeData.price = parseInt(query.salePrice);
     }
 
+    updateSubmit(`5/${stepMaps[query.mintOption]} Creating Buyer Minting Store`);
+
     const storeRes = await axios.post<DropStore>(
-      `${DROPOPAPIHOST}/stores`,
-      storeData, 
+      `${DROPOPAPIHOST}/stores/id/${res.data._id}`,
+      storeData,
       {
         headers: {
           "drop-token": activeToken
@@ -371,8 +377,10 @@ const BulkSelfService: NextPage = () => {
 
     // upload nfts;
 
+    updateSubmit(`6/${stepMaps[query.mintOption]} Processing Nft Data for Store`);
+
     const itemsList: DropStoreItemData[] = data.map(item => {
-      const itemData: DropStoreItemData ={
+      const itemData: DropStoreItemData = {
         store: storeRes.data._id,
         price: 0,
         style: "Self",
@@ -398,6 +406,7 @@ const BulkSelfService: NextPage = () => {
     })
 
     // upload items
+    updateSubmit(`7/${stepMaps[query.mintOption]} submitting Nfts to Server`);
 
     const finalRes = await axios.post(
       `${DROPOPAPIHOST}/items/${storeRes.data._id}`,
@@ -415,10 +424,14 @@ const BulkSelfService: NextPage = () => {
     createColTx.lastValidBlockHeight = lastValidBlockHeight;
     createColTx.recentBlockhash = blockhash;
 
+    updateSubmit(`8/${stepMaps[query.mintOption]} Requesting collecion transaction signature`);
+
     const sig = await sendTransaction(
       createColTx,
       connection,
     )
+
+    updateSubmit(`9/${stepMaps[query.mintOption]} Submitting Transaction`);
 
     await connection.confirmTransaction({
       blockhash,
@@ -428,7 +441,7 @@ const BulkSelfService: NextPage = () => {
 
     console.log(sig);
 
-    alert("Complete");
+    updateSubmit(`Completed`);
     setLoading(false);
     // setQuery(defalutQ)
   }
