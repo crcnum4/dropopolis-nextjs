@@ -55,6 +55,7 @@ export const getWalletNftCollection = async (
     if(!nftAccount) {
       continue;
     }
+    // TODO check that owner is === REE_META_PROGRAM_ID
     const nftAccountInfo = nftAccount.data;
     if (!nftAccountInfo) {
       continue;

@@ -92,3 +92,5 @@ SOLANA_SCHEMA.set(NftMetadata, {
     ['buffer', 'buffer']
   ]
 })
+
+const metadata: RoyaltyArt | Buffer = Buffer.alloc(1); // blank data without null
