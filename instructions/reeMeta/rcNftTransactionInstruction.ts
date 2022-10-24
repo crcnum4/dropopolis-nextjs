@@ -1,6 +1,6 @@
 import { PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
-import { Serializer, Ux } from "../tools/serializer";
-import { keyFormat } from "./utils";
+import { Serializer, Ux } from "../../tools/serializer";
+import { keyFormat } from "../utils";
 
 export const nftTransactionInstruction = (
   programId: PublicKey,

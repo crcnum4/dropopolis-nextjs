@@ -36,7 +36,7 @@ export class NftMetadata<T = MetaTypes>{
 
   constructor(data: NftMetadataData) {
     this.kind = data.kind;
-    this.mint = data.mint;
+    this.mint = new PublicKey(data.mint);
     this.isModifiable = data.isModifiable != 0;
     this.updateType = data.updateType;
   }

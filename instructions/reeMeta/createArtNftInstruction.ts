@@ -5,8 +5,8 @@ import {
   SYSVAR_RENT_PUBKEY,
 } from '@solana/web3.js'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token2'
-import { keyFormat } from './utils'
-import { Serializer, Ux } from '../tools/serializer'
+import { keyFormat } from '../utils'
+import { Serializer, Ux } from '../../tools/serializer'
 
 export type CreateArtNftKeys = {
   metadataPda: PublicKey,

@@ -1,17 +1,15 @@
 import { Connection, ParsedAccountData, PublicKey } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID, ACCOUNT_SIZE, Account } from '@solana/spl-token2';
+import { TOKEN_PROGRAM_ID, ACCOUNT_SIZE } from '@solana/spl-token2';
 import { NftMetadata } from "../types/NftMetadata";
 import base58 from "bs58";
 import { Serializer, Ux } from "../tools/serializer";
-import { AccountLayout } from "@solana/spl-token";
-import { deserialize } from "borsh";
 import { getMetadataPda } from "./getMetadataPda";
 import { REEMETA_PROGRAM_ID } from "../statics/programIds";
 
 export const getWalletNftCollection = async (
   wallet: PublicKey,
   connection: Connection,
-): Promise<NftMetadata[]> => {
+): Promise<{data: NftMetadata, tokenAccount:PublicKey}[]> => {
 
   const accounts = await connection.getParsedProgramAccounts(
     TOKEN_PROGRAM_ID,
@@ -38,17 +36,20 @@ export const getWalletNftCollection = async (
     }
   )
   
-  const mints: PublicKey[] = []
+  const mints: {pda: PublicKey, tokenAccount: PublicKey}[] = []
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i].account.data as ParsedAccountData;
     console.log(`${account.parsed['info']['mint']}`);
     const mint:string = account.parsed['info']['mint'];
-    mints.push(await getMetadataPda(new PublicKey(mint), REEMETA_PROGRAM_ID))
+    mints.push({
+      pda: await getMetadataPda(new PublicKey(mint), REEMETA_PROGRAM_ID),
+      tokenAccount: accounts[i].pubkey
+    })
   }
 
-  const nftAccounts = await connection.getMultipleAccountsInfo(mints, 'confirmed');
+  const nftAccounts = await connection.getMultipleAccountsInfo(mints.map(item => item.pda), 'confirmed');
 
-  const nfts: NftMetadata[] = [];
+  const nfts: {data: NftMetadata, tokenAccount: PublicKey}[] = [];
 
   for (let i = 0; i < nftAccounts.length; i++) {
     let nftAccount = nftAccounts[i];
@@ -61,7 +62,10 @@ export const getWalletNftCollection = async (
       continue;
     }
 
-    nfts.push(NftMetadata.decode(nftAccountInfo))
+    nfts.push({
+      data: NftMetadata.decode(nftAccountInfo),
+      tokenAccount: mints[i].tokenAccount,
+    })
   }
 
   console.log(nfts);

@@ -25,7 +25,7 @@ const StoreItem: FC<{
   useEffect(() => {
     const fetchOffChainData = async () => {
       const res = await axios.get<ArtNftOffChainMeta>(
-        `${storeItem.jsonUrl}`,
+        `https://cors-anywhere.herokuapp.com/${storeItem.jsonUrl}`,
         {
           headers: {
             "Access-Control-Allow-Origin": "*"
@@ -51,13 +51,22 @@ const StoreItem: FC<{
         })}
       >
         {
-          loading ? (<p className="p-2">loading...</p>) :
-          // eslint-disable-next-line @next/next/no-img-element
-          <img alt={storeItem.name} src={`url(${offChainData?.properties.files[0].uri})`} />
+          loading ? (<p className="p-2">loading...</p>) :(
+            <div className="bg-gray-300 rounded-xl relative" style={{minWidth: 200, maxHeight: 300, width: 'auto'}}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                alt={storeItem.name} 
+                src={`${offChainData?.properties.files[0].uri}`} 
+                className="rounded-xl object-contain max-h-full min-h-full"
+              />
+            </div>
+          )
         }
       </div>
+      <div className="flex-1 justify-center">
       <h2 className="text-xl my-2">{storeItem.name}</h2>
-      <h2 className="text-blue-500 text-xl font-bold my-2">{storeItem.price / LAMPORTS_PER_SOL}</h2>
+        <h2 className="text-blue-500 text-xl font-bold my-2">{storeItem.price / LAMPORTS_PER_SOL}</h2>
+      </div>
       <Button 
         className='bg-blue-500 hover:bg-blue-700 text-white py-3 px-5 rounded-md w-full my-5'
         onClick={handleClick}

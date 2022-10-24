@@ -12,6 +12,24 @@ export interface RoyaltyArtData {
   buffer: Buffer;
 }
 
+export interface RoyaltyArgs {
+  pubkey: PublicKey,
+  share: number;
+  verified: number;
+}
+
+export class Royalty {
+  pubkey: PublicKey;
+  share: number;
+  verified: boolean;
+
+  constructor(data: RoyaltyArgs) {
+    this.pubkey = new PublicKey(data.pubkey);
+    this.share = data.share;
+    this.verified = data.verified != 0;
+  }
+}
+
 export class RoyaltyArt {
   name: string;
   symbol: string;
@@ -49,6 +67,21 @@ export class RoyaltyArt {
 
     return art;
   }
+
+  decodeRoyalties(): Royalty[] {
+    if (!this.royaltiesBuffer) {
+      return [];
+    }
+    const royalties: Royalty[] = [];
+    let buffer = this.royaltiesBuffer.subarray(4);
+
+    while (buffer.length >= 35) {
+      console.log(buffer.subarray(32,35))
+      royalties.push(deserialize(SOLANA_SCHEMA, Royalty, buffer.subarray(0, 35)))
+      buffer = buffer.subarray(35);
+    }
+    return royalties;
+  }
 }
 
 SOLANA_SCHEMA.set(RoyaltyArt, {
@@ -60,5 +93,14 @@ SOLANA_SCHEMA.set(RoyaltyArt, {
     ['resaleFee', 'u16'],
     ['initialSale', 'u8'],
     ['buffer', 'buffer']
+  ]
+})
+
+SOLANA_SCHEMA.set(Royalty, {
+  kind: 'struct',
+  fields: [
+    ['pubkey', [32]],
+    ['share', 'u16'],
+    ['verified', 'u8']
   ]
 })

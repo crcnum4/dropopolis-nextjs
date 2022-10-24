@@ -17,6 +17,7 @@ import { AuthContext } from "../providers/AuthProvider";
 import base58 from "bs58";
 import { DropCollection } from "../../types/DropCollection";
 import { DropStore, DropStoreData, DropStoreItem, DropStoreItemData } from "../../types/DropStore";
+import { addUploaderInstruction } from "../../instructions/reeCollection/addUploaderInstruction";
 
 export interface BulkDropFormQuery {
   file: FileQuery,
@@ -312,8 +313,6 @@ const BulkSelfService: NextPage = () => {
       query.collectionUrl,
       publicKey,
     )
-
-    const authority = Keypair.generate();
     // TODO: add another instruction to add the server authority as uploader and publisher.
 
     // create server side collection 
@@ -327,6 +326,7 @@ const BulkSelfService: NextPage = () => {
       shortDescription: "Placeholder data",
       detailedDescription: "Placeholder Text",
       headerImage: query.imageUrl,
+      needAuth: true,
     }
 
     updateSubmit(`3/${stepMaps[query.mintOption]} Getting Server Authentication Token`);
@@ -343,7 +343,7 @@ const BulkSelfService: NextPage = () => {
 
     updateSubmit(`4/${stepMaps[query.mintOption]} Creating Collection`);
 
-    const res = await axios.post<DropCollection>(
+    const res = await axios.post<{_id: string, authPubkey: string}>(
       `${DROPOPAPIHOST}/collections`, 
       serverCollectionData,
       {
@@ -417,9 +417,20 @@ const BulkSelfService: NextPage = () => {
         }
       }
     )
+
+    const addUploader = addUploaderInstruction(
+      {
+        programId: REECOLLECTION_PROGRAM_ID,
+        collectionPda: collectionPda,
+        payer: publicKey,
+        publisher: publicKey,
+        newUploader: new PublicKey(res.data.authPubkey)
+      }
+    )
     
     const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
 
+    createColTx.add(addUploader);
     createColTx.feePayer = publicKey;
     createColTx.lastValidBlockHeight = lastValidBlockHeight;
     createColTx.recentBlockhash = blockhash;
@@ -429,6 +440,7 @@ const BulkSelfService: NextPage = () => {
     const sig = await sendTransaction(
       createColTx,
       connection,
+      {skipPreflight: true}
     )
 
     updateSubmit(`9/${stepMaps[query.mintOption]} Submitting Transaction`);

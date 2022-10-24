@@ -1,8 +1,8 @@
 import {
   PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction
 } from '@solana/web3.js';
-import { keyFormat } from './utils';
-import { Serializer, Ux } from '../tools/serializer';
+import { keyFormat } from '../utils';
+import { Serializer, Ux } from '../../tools/serializer';
 
 export type AddItemToCollectionKeys = {
   programId: PublicKey,
@@ -20,7 +20,8 @@ export const addItemToCollectionInstruction = (
   keys: AddItemToCollectionKeys,
   data: AddPropertiesData,
 ): TransactionInstruction => {
-  
+  console.log(keys);
+
   return new TransactionInstruction({
     programId: keys.programId,
     keys: [
@@ -31,9 +32,11 @@ export const addItemToCollectionInstruction = (
       keyFormat.readonly(SystemProgram.programId),
       keyFormat.readonly(SYSVAR_RENT_PUBKEY)
     ],
-    data: Buffer.concat([
-      Serializer.number(1, Ux.U8),
-      ...data.attributes.flat().map(item => Serializer.string(item))
-    ])
+    data: data.attributes.length === 0 ? 
+      Serializer.number(1, Ux.U8) 
+    : Buffer.concat([
+        Serializer.number(1, Ux.U8),
+        ...data.attributes.flat().map(item => Serializer.string(item))
+      ])
   })
 }

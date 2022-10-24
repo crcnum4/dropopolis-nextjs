@@ -4,10 +4,10 @@ import {
   createMintInstruction, 
   createArtNftInstruction, 
   mintNftToInstruction, 
-  CreateArtNftData
+  CreateArtNftData,
+  addRoyaltyInstruction
 } from '../instructions';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, getAccount, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token2';
-import { addRoyaltyInstruction } from '../instructions/addRoyaltyInstruction';
 
 export const createAndMintArtNftTransaction = async (
   connection: Connection,

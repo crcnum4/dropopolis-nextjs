@@ -2,9 +2,10 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import axios, { AxiosError } from "axios";
 import base58 from "bs58";
-import { useEffect, useState, FC, useContext, useCallback } from "react";
+import { useEffect, useState, FC, useContext, useCallback, isValidElement } from "react";
 import { addItemToCollectionInstruction, CreateArtNftData, createArtNftInstruction, createMintInstruction } from "../../instructions";
-import { nftTransactionInstruction } from "../../instructions/rcNftTransactionInstruction";
+import { nftTransactionInstruction } from "../../instructions";
+import { AddCollectionApiArgs, ResponseData } from "../../pages/api/addCollection";
 import { DataRequest, MessageRes } from "../../pages/api/purchased";
 import { createAndMintArtNftTransaction } from "../../scripts/createAndMintNftTransaction";
 import { getMetadataPda } from "../../scripts/getMetadataPda";
@@ -164,22 +165,55 @@ const Store: FC<{collection: DropCollection, owner: PublicKey, storeId: string}>
       [owner, REE_SHARE_ADDRESS]
     )
 
-    tx.add(paymentIx)
+    tx.add(paymentIx)    
     
     const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
 
     tx.recentBlockhash = blockhash;
     tx.lastValidBlockHeight = lastValidBlockHeight;
     tx.feePayer = wallet.publicKey;
-    tx.partialSign(mintKeys);
 
-    console.log(tx.serialize.length);
+    const addCollectionArgs: AddCollectionApiArgs = {
+      buyer: wallet.publicKey.toString(),
+      itemPda: metadataPda.toString(),
+      collectionId: collection._id,
+      transaction: base58.encode(tx.serialize({verifySignatures: false})),
+      itemId: nft._id,
+    }
+
+    
+
+    const result = await axios.post<ResponseData>('/api/addCollection', addCollectionArgs)
+
+    if (!result.data.tx) {
+      alert("Add do collection ix failed");
+      console.log(result.data.message);
+      console.log(result.data.type);
+      setPurchasing(false);
+      return;
+    }
+ 
+    const finalTx = Transaction.from(base58.decode(result.data.tx));
+
+    finalTx.partialSign(mintKeys);
+
+    // const addToColSig = finalTx.signatures[0];
+
+    // if (!addToColSig.signature) {
+    //   alert("Add to collection Signature missing");
+    // }
+
+    // tx.add(finalTx.instructions[0]);
+    // tx.addSignature(finalTx.signatures[0].publicKey, finalTx.signatures[0].signature);
+
+    console.log('lengt', finalTx.serialize.length);
 
     // create the add nft to collection ix.
     setPurchasingDetails(`4/${PURCHASING_STEPS} requesting signature`)
     const signature = await wallet.sendTransaction(
-      tx, 
+      finalTx, 
       connection,
+      // {skipPreflight: true}
     );
 
     setPurchasingDetails(`5/${PURCHASING_STEPS} confirming transaction`)

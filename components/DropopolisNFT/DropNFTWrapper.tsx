@@ -21,6 +21,9 @@ const DropNFTWrapper : FC<DropNFTWrapperProps> = (props) => {
     const { hash:metaDataIpfsHash } = router.query;
     console.log("metaDataIpfsHash: " + metaDataIpfsHash);
     
+    // Clarification the url for the NFT metadata should be standalone.
+    // we can not assume IPFS unless this is the IPFS viewer and it locks this
+    // component to the IPFS Full service page.
     const apiUri = IPFS_GATEWAY_GET || 'https://ipfs.io/ipfs'
 
     useEffect(() => {

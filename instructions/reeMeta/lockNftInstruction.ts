@@ -2,8 +2,8 @@ import {
   PublicKey,
   TransactionInstruction,
 } from '@solana/web3.js'
-import { keyFormat } from './utils'
-import { Serializer, Ux } from '../tools/serializer'
+import { keyFormat } from '../utils'
+import { Serializer, Ux } from '../../tools/serializer'
 
 export type LockNftKeys = {
   programId: PublicKey,

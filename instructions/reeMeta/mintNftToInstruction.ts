@@ -3,8 +3,8 @@ import {
   TransactionInstruction,
 } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { keyFormat } from "./utils";
-import { Serializer, Ux } from "../tools/serializer";
+import { keyFormat } from "../utils";
+import { Serializer, Ux } from "../../tools/serializer";
 
 export type mintNftKeys = {
   mint: PublicKey,
