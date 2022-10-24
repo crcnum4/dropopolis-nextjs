@@ -10,3 +10,10 @@ export interface DropCollection {
   detailedDescription: string,
   headerImage: string,
 }
+
+export interface DropCollectionWithAuth extends DropCollection {
+  authority: {
+    publicKey: string,
+    secret: string,
+  }
+}

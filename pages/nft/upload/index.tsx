@@ -10,7 +10,7 @@ import { createMetadataJson } from "../../../scripts/createMetadataJson";
 import { ArtNftUploadErrors, ArtNftUploadQuery, initialArtNftUploadQuery } from "../../../types/ArtNft";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { createAndMintArtnNftTransaction } from "../../../scripts/createAndMintNftTransaction";
+import { createAndMintArtNftTransaction } from "../../../scripts/createAndMintNftTransaction";
 import { PublicKey } from "@solana/web3.js";
 import PreviewNft from "../../../components/NftUploader/PreviewNft";
 import Button from "../../../components/common/Button";
@@ -100,8 +100,12 @@ const UploadPage : NextPage = () => {
         return;
         }
         setBackDropMessage("(3/5) - Building NFT Mint Transaction")
-        const {mintKeys, tokenAccount, tx} = await createAndMintArtnNftTransaction(
+        const {mintKeys, tx} = await createAndMintArtNftTransaction(
             connection,
+            publicKey,
+            publicKey,
+            publicKey,
+            publicKey,
             publicKey,
             new PublicKey(programId),
             mintData,

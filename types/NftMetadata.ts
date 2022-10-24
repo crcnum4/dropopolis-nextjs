@@ -25,18 +25,18 @@ export interface NftMetadataData {
 
 export type MetaTypes = RoyaltyArt | Buffer ;
 
-export class NftMetadata {
+export class NftMetadata<T = MetaTypes>{
   kind: NftKind;
   mint: PublicKey;
   isModifiable: boolean;
   updateType: UpdateType;
   collection?: PublicKey;
   updateAuthority?: PublicKey;
-  data?: MetaTypes
+  data?: T
 
   constructor(data: NftMetadataData) {
     this.kind = data.kind;
-    this.mint = data.mint;
+    this.mint = new PublicKey(data.mint);
     this.isModifiable = data.isModifiable != 0;
     this.updateType = data.updateType;
   }

@@ -1,8 +1,8 @@
 import {
   PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction
 } from '@solana/web3.js';
-import { keyFormat } from './utils';
-import { Serializer, Ux } from '../tools/serializer';
+import { keyFormat } from '../utils';
+import { Serializer, Ux } from '../../tools/serializer';
 import exp from 'constants';
 import { AddPropertiesData } from './addItemToCollectionInstruction';
 

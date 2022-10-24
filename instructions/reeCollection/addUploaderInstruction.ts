@@ -1,8 +1,8 @@
 import {
   PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction
 } from '@solana/web3.js';
-import { keyFormat } from './utils';
-import { Serializer, Ux } from '../tools/serializer';
+import { keyFormat } from '../utils';
+import { Serializer, Ux } from '../../tools/serializer';
 
 export type AddUploaderKeys = {
   programId: PublicKey,
@@ -22,6 +22,7 @@ export const addUploaderInstruction = (keys: AddUploaderKeys): TransactionInstru
       keyFormat.readonly(keys.newUploader),
       keyFormat.readonly(SystemProgram.programId),
       keyFormat.readonly(SYSVAR_RENT_PUBKEY),
-    ]
+    ],
+    data: Serializer.number(4, Ux.U8)
   })
 }

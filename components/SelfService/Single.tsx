@@ -3,7 +3,8 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useState } from "react";
 import SelfDropForm from "../../components/SelfService/SelfDropForm";
-import { createAndMintArtnNftTransaction } from "../../scripts/createAndMintNftTransaction";
+import { createAndMintArtNftTransaction } from "../../scripts/createAndMintNftTransaction";
+import { REEMETA_PROGRAM_ID } from "../../statics/programIds";
 
 export interface SelfDropFormQuery {
   name: string,
@@ -49,10 +50,11 @@ const SingleSelfService: NextPage = () => {
       setLoading(false)
       return;
     }
-    const {mintKeys, tokenAccount, tx} = await createAndMintArtnNftTransaction(
+    const {mintKeys, tx} = await createAndMintArtNftTransaction(
       connection,
       publicKey,
-      new PublicKey(programId),
+      publicKey,
+      REEMETA_PROGRAM_ID,
       {
         name: query.name,
         symbol: query.symbol,

@@ -4,8 +4,8 @@ import {
   SystemProgram,
   SYSVAR_RENT_PUBKEY
 } from '@solana/web3.js'
-import { keyFormat } from './utils';
-import { Serializer, Ux } from '../tools/serializer';
+import { keyFormat } from '../utils';
+import { Serializer, Ux } from '../../tools/serializer';
 
 export type AddRoyaltyKeys = {
   metadataPda: PublicKey,

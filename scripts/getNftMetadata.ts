@@ -13,5 +13,4 @@ export const getNftMetadata = async(token: PublicKey, connection: Connection): P
   }
 
   return NftMetadata.decode(accountInfo.data);
-
 } 

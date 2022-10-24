@@ -91,7 +91,7 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
     }})
 
     setToken(res.data.token);
-    return token;
+    return res.data.token;
   }
 
   //update nonce if pubkey changes

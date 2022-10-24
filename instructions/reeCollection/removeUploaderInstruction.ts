@@ -1,20 +1,20 @@
 import {
   PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction
 } from '@solana/web3.js';
-import { keyFormat } from './utils';
-import { Serializer, Ux } from '../tools/serializer';
-import { type } from 'os';
+import { keyFormat } from '../utils';
+import { Serializer, Ux } from '../../tools/serializer';
 
-export type LockCollectionKeys = {
+export type RemoveUploaderKeys = {
   programId: PublicKey,
   collectionPda: PublicKey,
   payer: PublicKey,
   publisher: PublicKey,
+  uploaderTarget: PublicKey,
   rentRecipient: PublicKey,
 }
 
-export const lockCollectionInstruction = (
-  keys: LockCollectionKeys
+export const removeUploaderInstruction = (
+  keys: RemoveUploaderKeys
 ): TransactionInstruction => {
   return new TransactionInstruction({
     programId: keys.programId,
@@ -22,10 +22,11 @@ export const lockCollectionInstruction = (
       keyFormat.writable(keys.collectionPda),
       keyFormat.full(keys.payer),
       keyFormat.signOnly(keys.publisher),
+      keyFormat.readonly(keys.uploaderTarget),
       keyFormat.writable(keys.rentRecipient),
       keyFormat.readonly(SystemProgram.programId),
-      keyFormat.readonly(SYSVAR_RENT_PUBKEY),
+      keyFormat.readonly(SYSVAR_RENT_PUBKEY)
     ],
-    data: Serializer.number(2, Ux.U8)
+    data: Serializer.number(5, Ux.U8)
   })
 }
