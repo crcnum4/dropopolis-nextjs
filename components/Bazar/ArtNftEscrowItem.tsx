@@ -38,7 +38,7 @@ const ArtNftEscrowItem: FC<Props> = ({escrow, nft, pubkey, onBuy, buyable}) => {
         return;
       }
       const res = await axios.get<ArtNftOffChainMeta>(
-        `https://cors-anywhere.herokuapp.com/${nft.data.uri}`
+        `${nft.data.uri}`
       );
       setOffChainData(res.data);
       setLoading(false);

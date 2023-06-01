@@ -1,7 +1,7 @@
 import { faGlobeAmericas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PublicKey } from "@solana/web3.js";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { FC, useEffect, useState } from "react";
 import { ArtNftOffChainMeta } from "../../types/ArtNft";
 import { NftMetadata } from "../../types/NftMetadata";
@@ -15,7 +15,7 @@ interface Props {
   nft: NftMetadata<RoyaltyArt>,
   tokenAccount: PublicKey,
   isOwner?: boolean,
-  sellNft: (nft: NftMetadata<RoyaltyArt>, tokenAccount: PublicKey, amount: number) => void
+  sellNft?: (nft: NftMetadata<RoyaltyArt>, tokenAccount: PublicKey, amount: number) => void
 }
 
 const ArtNftCard: FC<Props> = ({nft, tokenAccount, isOwner, sellNft}) => {
@@ -27,6 +27,9 @@ const ArtNftCard: FC<Props> = ({nft, tokenAccount, isOwner, sellNft}) => {
   }
 
   const submitSell = (amount: number) => {
+    if (!sellNft) {
+      return;
+    }
     setOverlay(false);
     sellNft(nft, tokenAccount, amount);
   }
@@ -40,9 +43,14 @@ const ArtNftCard: FC<Props> = ({nft, tokenAccount, isOwner, sellNft}) => {
       if (!nft.data || !nft.data.uri) {
         return;
       }
-      const res = await axios.get<ArtNftOffChainMeta>(
-        `https://cors-anywhere.herokuapp.com/${nft.data.uri}`,
-      );
+      let res: AxiosResponse<ArtNftOffChainMeta, any>; 
+      if (nft.data.uri.includes("ipfs")) {
+        res = await axios.get<ArtNftOffChainMeta>(nft.data.uri);
+      } else {
+        res = await axios.get<ArtNftOffChainMeta>(
+          `${nft.data.uri}`,
+        );
+      }
       setOffChainData(res.data);
       setLoading(false);
 

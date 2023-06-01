@@ -104,3 +104,31 @@ SOLANA_SCHEMA.set(Royalty, {
     ['verified', 'u8']
   ]
 })
+
+export interface RoyaltyArtOffChainMeta {
+  name: string
+  symbol: string
+  description: string
+  externalUrl: string
+  attributes: RoyaltyArtAttributes[]
+  properties: RoyaltyArtProperties
+}
+
+export interface RoyaltyArtCreator {
+  address: string
+  share: number
+}
+
+
+export interface RoyaltyArtAttributes {
+  name: string
+  value: string | number
+}
+
+export interface RoyaltyArtProperties {
+  files: {
+      type: string
+      uri: string
+  }[]
+  creators: RoyaltyArtCreator[]
+}

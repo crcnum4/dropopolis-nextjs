@@ -178,6 +178,7 @@ const BulkSelfForm: FC<FormProps> = (props) => {
       </InlineInputContainer>
       <InlineInputContainer>
         <Input 
+          label='JSON file with NFT Data'
           style={{color: 'black'}}
           placeholder='JSON file with array of NFT data'
           type="file"

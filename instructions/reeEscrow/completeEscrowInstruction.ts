@@ -41,7 +41,7 @@ export const completeEscrowInstruction = (
   const keyList = [
     keyFormat.writable(escrowPda),
     keyFormat.full(payer),
-    keyFormat.readonly(assetMetadata),
+    keyFormat.writable(assetMetadata),
     keyFormat.writable(assetHoldingAccount),
     keyFormat.writable(seller),
     keyFormat.writable(buyerAssetAccount),

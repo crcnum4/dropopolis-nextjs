@@ -458,15 +458,6 @@ const BulkSelfService: NextPage = () => {
     // setQuery(defalutQ)
   }
 
-    // buyer minting
-    // step 2: create an authority keypair
-    // step 3: create the ReeCollection account
-    // step 4: create an NFT deposit transaction.
-    // step 5: sign the transactions
-    // step 6: submit the transaction
-    // step 7: upload collection data to server.
-    // step 8: upload the nfts to the server. 
-
   const onUpdate = (field: string, value: string): void => {
     setQuery({
       ...query,

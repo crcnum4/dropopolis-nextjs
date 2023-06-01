@@ -41,7 +41,7 @@ const NewDrop: NextPage = () => {
         <p>
           If you are looking for a fully decentralized solution or want to maintain the files on your own centralized hosting service and you know how to make a file publicly available on the internet then self service is the choice for you. Make sure to refer to our JSON format guide to ensure the minimum data is present on the JSON file.
         </p>
-        <Link href='/hew/self'>
+        <Link href='/new/self'>
           <a className="bg-blue-500 hover:bg-blue-700 text-white py-3 px-5 rounded-md w-fit my-5">Self Service Creation</a>
         </Link>
       </div>

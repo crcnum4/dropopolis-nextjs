@@ -39,7 +39,7 @@ const SingleSelfService: NextPage = () => {
   
   const onSubmit = async () => {
     setLoading(true);
-    const programId = process.env.NEXT_PUBLIC_REEMETA_PROGRAM_ID;
+    const programId = REEMETA_PROGRAM_ID;
     if (!programId) {
       alert("Program ID error contact support.");
       setLoading(false)

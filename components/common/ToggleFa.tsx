@@ -33,7 +33,7 @@ const ToggleFa: FC<ToggleProps> = (props) => {
         style={props.active? props.activeStyle : props.deactiveStyle}
         size="lg"
       />
-      <p>{props.label}</p>
+      <p className="px-2">{props.label}</p>
     </div>
   )
 }

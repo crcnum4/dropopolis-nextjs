@@ -1,4 +1,6 @@
 import { ArtNftOffChainMeta, ArtNftUploadQuery } from "../types/ArtNft"
+import { RoyaltyArtOffChainMeta } from "../types/RoyaltyArt"
+import { URoyaltyArtQuery } from "../types/UploadTypes"
 
 export const createMetadataJson = (query: ArtNftUploadQuery): string => {
 
@@ -31,4 +33,25 @@ export const createMetadataJson = (query: ArtNftUploadQuery): string => {
 
 
    return JSON.stringify(metadataJson, null, 2)
+}
+
+export const createMetadataJsonFile = (query: URoyaltyArtQuery): string => {
+    const metadataJson: RoyaltyArtOffChainMeta = {
+        name: query.name,
+        symbol: query.symbol,
+        description: query.description,
+        externalUrl: query.externalUrl,
+        properties: {
+            files: [
+                {
+                    type: "IMAGE",
+                    uri: query.img.url
+                }
+            ],
+            creators: query.creators,
+        },
+        attributes: query.attributes
+    }
+
+    return JSON.stringify(metadataJson, null, 2)
 }

@@ -15,9 +15,12 @@ import { PublicKey } from "@solana/web3.js";
 import PreviewNft from "../../../components/NftUploader/PreviewNft";
 import Button from "../../../components/common/Button";
 import { MultiPartInput } from "../../../components/common/MultiTextInput";
+import { REEMETA_PROGRAM_ID } from "../../../statics/programIds";
 
 const IPFS_GATEWAY_POST = process.env.NEXT_PUBLIC_IPFS_GATEWAY_POST
 const IPFS_GATEWAY_GET = process.env.NEXT_PUBLIC_IPFS_GATEWAY_GET || 'https://ipfs.io/ipfs'
+const infuraPID = "2GZwTXjCCFKzCg7riw5RfmzibnI"
+const infuraSecret = "7a97e70a8dd26715272a055448cf4d2c"
 
 export interface NftMintData {
   name: string
@@ -31,20 +34,27 @@ interface MintError {
 }
 
 const UploadPage : NextPage = () => {
-  const ipfsClient = create({url: IPFS_GATEWAY_POST})
-  const [ipfsIsOnline, setIpfsIsOnline] = useState(false)
+  const ipfsClient = create({
+    host: "ipfs.infura.io",
+    port: 5001,
+    protocol: 'https',
+    headers: {
+      authorization: `Basic ${Buffer.from(infuraPID + ":" + infuraSecret).toString('base64')}`
+    }
+  })
+  const [ipfsIsOnline, setIpfsIsOnline] = useState(true)
   
   const {connection} = useConnection();
   const {publicKey, sendTransaction} = useWallet();
 
 
-  useEffect(() => {
-    (async function checkIpfsStatus() {
-      const isOnline = await ipfsClient.isOnline();
-      console.log("IPFS Service is online: " + isOnline);
-      setIpfsIsOnline(isOnline)
-    })();
-  }, [ipfsClient]);  
+  // useEffect(() => {
+  //   (async function checkIpfsStatus() {
+  //     const isOnline = await ipfsClient.isOnline();
+  //     console.log("IPFS Service is online: " + isOnline);
+  //     setIpfsIsOnline(isOnline)
+  //   })();
+  // }, [ipfsClient]);  
   
 
   const [query, setQuery] = useState<ArtNftUploadQuery>({
@@ -104,10 +114,7 @@ const UploadPage : NextPage = () => {
             connection,
             publicKey,
             publicKey,
-            publicKey,
-            publicKey,
-            publicKey,
-            new PublicKey(programId),
+            REEMETA_PROGRAM_ID,
             mintData,
             8
         )
