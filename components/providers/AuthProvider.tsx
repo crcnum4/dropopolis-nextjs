@@ -81,7 +81,7 @@ export const AuthProvider: FC<PropsWithChildren> = (props) => {
       return "";
     }
 
-    const url = `http://localhost:5000/api/accounts/authenticate`
+    const url = `http://localhost:4000/api/accounts/authenticate`
     const res = await axios.post(url, {}, {headers: {
       "drop-pubkey": publicKey.toBase58(),
       "drop-nonce": nonce,

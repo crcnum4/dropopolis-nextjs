@@ -70,6 +70,7 @@ const Ipfs: NextPage = () => {
     )
 
     const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
+    tx.recentBlockhash = blockhash;
 
     setOverlayMessage("5/6 Getting Signature")
     const signature = await wallet.sendTransaction(
@@ -81,11 +82,7 @@ const Ipfs: NextPage = () => {
     )
 
     setOverlayMessage("6/6 Confirming Transaction")
-    await connection.confirmTransaction({
-      blockhash,
-      lastValidBlockHeight,
-      signature
-    })
+    await connection.confirmTransaction(signature)
 
     console.log(signature);
     setOverlayMessage("Complete");

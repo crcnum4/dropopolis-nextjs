@@ -83,7 +83,6 @@ const WalletGallery: NextPage = () => {
     
     const {blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash('finalized');
     tx.feePayer = wallet.publicKey;
-    tx.lastValidBlockHeight = lastValidBlockHeight;
     tx.recentBlockhash = blockhash;
 
     const sig = await wallet.sendTransaction(
@@ -92,11 +91,7 @@ const WalletGallery: NextPage = () => {
       {skipPreflight: true}
     )
 
-    await connection.confirmTransaction({
-      blockhash,
-      lastValidBlockHeight,
-      signature: sig,
-    })
+    await connection.confirmTransaction(sig)
 
     console.log(sig);
     fetchGallery();
